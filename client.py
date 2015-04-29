@@ -4,17 +4,16 @@ from class_ import *
 from math import *
 pygame.init()
 
-call = sys.argv[1]#raw_input("Callsign: ")
-team = sys.argv[3] #raw_input("Team [1,2]: ")
-class_ = sys.argv[2] #raw_input("Class[Fighter,Interceptor,Bomber]: ")
+#call = sys.argv[1]#raw_input("Callsign: ")
+#team = sys.argv[3] #raw_input("Team [1,2]: ")
+#class_ = sys.argv[2] #raw_input("Class[Fighter,Interceptor,Bomber]: ")
 s = socket(AF_INET,SOCK_DGRAM)
 
-start = False
+start = "lobby"
 
 #host = ((raw_input("Server IP: "),int(raw_input("Port: "))))
-host = (sys.argv[4],int(sys.argv[5]))
-
-s.sendto("0 "+call+" "+class_+" "+team,host)
+#host = (sys.argv[4],int(sys.argv[5]))
+host = ("localhost",8001)
 
 map = []
 bmap = []
@@ -25,6 +24,7 @@ rockets = []
 turrets = []
 shields = []
 players = {}
+call = ""
 
 lscrollx = 0
 fudge = 1.
@@ -60,7 +60,7 @@ def read(id):
 			inp = s.recvfrom(12000)
 			if inp[0] == "111":
 				global start
-				start = True
+				start = "running"
 			g = inp[0].split(" ")
 			cmd = int(g[0])
 			if cmd == 0:
@@ -214,8 +214,18 @@ mp = False
 chat = False
 text1 = ""
 
+f2 = pygame.font.SysFont("Sans",40)
+callsign = ""
+class_ = "Fighter"
+server = "localhost"
+port = "8001"
+selected = 0
+classn = 0
+team = 0
+teamn = 0
+
 while True:
-	if start:
+	if start == "running":
 		#print players["Bot0"].speed
 		mx,my = pygame.mouse.get_pos()
 		for event in pygame.event.get():
@@ -392,11 +402,90 @@ while True:
 				raise SystemExit
 		pygame.display.update()
 		count+=1
-	else:
+	elif start == "waiting":
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				pygame.display.quit()
 		screen.fill((0,0,0))
 		t = font.render("Waiting for Players...",True,(255,255,255))
 		screen.blit(t,(430-t.get_width()/2,340-t.get_height()/2))
+		pygame.display.update()
+	else:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.display.quit()
+			if event.type == KEYDOWN:
+				#s.sendto("0 "+call+" "+class_+" "+team,host)
+				if event.key == K_UP:
+					if selected>0:
+						selected-=1
+				elif event.key == K_DOWN:
+					if selected<5:
+						selected+=1
+				elif event.key == K_RIGHT and selected == 1:
+					classn+=1
+				elif event.key == K_LEFT and selected == 1:
+					classn-=1
+				elif event.key == K_RIGHT and selected == 2:
+					teamn+=1
+				elif event.key == K_LEFT and selected == 2:
+					teamn-=1
+				elif event.key == K_RETURN:
+					host = (server,int(port))
+					call = callsign
+					s.sendto("0 "+callsign+" "+class_.lower()+" "+str(team),host)
+					start = "waiting"
+				else:
+					if selected == 0:
+						if event.key == K_BACKSPACE:
+							callsign = callsign[:-1]
+						else:
+							callsign+=pygame.key.name(event.key)
+					if selected == 3:
+						if event.key == K_BACKSPACE:
+							server = server[:-1]
+						else:
+							server+=pygame.key.name(event.key)
+					if selected == 4:
+						if event.key == K_BACKSPACE:
+							port = port[:-1]
+						else:
+							port+=pygame.key.name(event.key)
+				c = ["Fighter","Interceptor","Bomber"]
+				class_ = c[classn%3]	
+				team = teamn%2+1			
+
+		screen.fill((0,0,0))
+		t = f2.render("STARFURY",True,(255,255,255))
+		if selected == 0:
+			t2 = font.render("CALLSIGN: "+callsign,True,(155,155,255))
+		else:
+			t2 = font.render("CALLSIGN: "+callsign,True,(255,255,255))
+		if selected == 1:
+			t3 = font.render("CLASS: "+class_,True,(155,155,255))
+		else:
+			t3 = font.render("CLASS: "+class_,True,(255,255,255))
+		if selected == 2:
+			t45 = font.render("TEAM: "+str(team),True,(155,155,255))
+		else:
+			t45 = font.render("TEAM: "+str(team),True,(255,255,255))
+		if selected == 3:
+			t4 = font.render("SERVER: "+server,True,(155,155,255))
+		else:
+			t4 = font.render("SERVER: "+server,True,(255,255,255))
+		if selected == 4:
+			t5 = font.render("PORT: "+port,True,(155,155,255))
+		else:
+			t5 = font.render("PORT: "+port,True,(255,255,255))
+		if selected == 5:
+			t6 = font.render("CONNECT",True,(155,155,255))
+		else:
+			t6 = font.render("CONNECT",True,(255,255,255))
+		screen.blit(t,(430-t.get_width()/2,140-t.get_height()/2))
+		screen.blit(t2,(430-t.get_width()/2-200,290-t2.get_height()/2))
+		screen.blit(t3,(430-t.get_width()/2-200,340-t3.get_height()/2))
+		screen.blit(t45,(430-t.get_width()/2-200,390-t4.get_height()/2))
+		screen.blit(t4,(430-t.get_width()/2-200,440-t4.get_height()/2))
+		screen.blit(t5,(430-t.get_width()/2-200,490-t5.get_height()/2))
+		screen.blit(t6,(430-t6.get_width()/2,590-t6.get_height()/2))
 		pygame.display.update()
