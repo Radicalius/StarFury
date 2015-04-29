@@ -1,0 +1,6 @@
+Name=Bomb Clip
+Char=<
+Image=explosion.png
++1 Ammo
++0.5 Range
+-0.5 RoF

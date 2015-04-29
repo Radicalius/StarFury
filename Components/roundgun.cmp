@@ -1,0 +1,7 @@
+Name=RoundGun
+Char=<
+Image=explosion.png
++0.25 Caliber
++0.25 RoF
++0.25 Range
++0.25 BS

@@ -1,0 +1,7 @@
+Name=Peashooter
+Char=<
+Image=explosion.png
++1 RoF
++1 BS
+-0.5 Range
+-0.5 Cal

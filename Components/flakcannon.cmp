@@ -1,0 +1,6 @@
+Name=Flak Cannon
+Char=<
+Image=explosion.png
++1 Caliber
++1 Range
+-1 RoF

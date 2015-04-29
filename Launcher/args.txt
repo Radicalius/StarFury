@@ -1,0 +1,5 @@
+host=127.0.0.1
+port=8000
+call=zac2
+class=fighter
+team=2

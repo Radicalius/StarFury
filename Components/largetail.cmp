@@ -1,0 +1,5 @@
+Name=Tail
+Char=<
+Image=explosion.png
+-0.5 Speed
++1.5 Handling

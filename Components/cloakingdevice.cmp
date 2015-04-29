@@ -1,0 +1,5 @@
+Name=Cloaking Device
+Char=<
+Image=explosion.png
++0.5 Duration
+-0.5 Amp
