@@ -60,7 +60,7 @@ for i in range(length+3):
 
 sx = int(0.0625*length)
 mx = int(0.75*length)
-for i in range(playernum+1):
+for i in range(playernum):
 	if i<playernum/2:
 		x = i*int(length*0.0625)+sx
 		bmap[x] = -3
@@ -394,4 +394,12 @@ while True:
 				for i in players.keys():
 					if not players[i].ai:
 						ss.sendto("18 "+uaddrs[addr]+" "+g[1],addrs[i])
+	if cmd == 10:
+		user = players[uaddrs[addr]]
+		for i in players.keys():
+			if not players[i].ai:
+				s = ""
+				for j in g[1:]:
+					s+=j+" "
+				ss.sendto("21 "+user.call+" "+s,addrs[i])	
 				

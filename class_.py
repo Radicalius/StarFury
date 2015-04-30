@@ -435,15 +435,19 @@ class Player(object):
 						x-=1
 				else:
 					print "2 is dead"
-					an = 0
+					an = 1
 					x = len(bmap)/2
-					for i in bmap:	
-						if i==-3:
+					for i in range(len(bmap)/2):	
+						if bmap[i]==-3:
 							an+=1
 							print self.team,an,self.airfield-1
 						if an == self.airfield-1:
 							self.x = x*20-430
-							self.y = 680-map[int(self.x+430)/20]*20+10
+							try:
+								self.y = 680-map[int(self.x+430)/20]*20+10
+							except:
+								print len(map),self.x/20
+								self.y = 680-map[int(self.x)/20]*20+10
 							self.expd = False
 							self.alive = True
 							print "in"
