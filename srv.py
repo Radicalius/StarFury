@@ -28,7 +28,7 @@ playerc = 0
 start = False
 af1 = 0
 af2 = 0
-bots = 4
+bots = 5
 
 last = random.randint(1,10)
 map.append(860/20)
@@ -75,7 +75,7 @@ for i in range(playernum+1):
 		map[x-2] = map[x]
 		map[x-3] = map[x]	
 	else:
-		x = -(i-3)*int(length*0.0625)
+		x = -(i-3)*int(length*0.0625)-sx
 		bmap[x] = -3
 		bmap[x+9] = 5
 		bmap[x+2] = 4

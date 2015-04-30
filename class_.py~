@@ -279,18 +279,22 @@ class Player(object):
 				f2 = pygame.transform.rotate(fighter,self.rt)
 				screen.blit(f2,(430-f2.get_width()/2,self.y-f2.get_height()/2))
 			else:
-				if self.call == "zac1":
-					print "in"
+				label = font.render(self.call,True,(155,155,155))
 				fighter = pygame.image.load("Images/"+self.class_+self.team+".png").convert_alpha()
 				if (self.rt%360>90 and self.rt%360<270):
 					fighter = pygame.transform.flip(fighter,False,True)
 				f2 = pygame.transform.rotate(fighter,self.rt)
 				if not self.stealth:
+					if self.call!=call or True:
+						screen.blit(label,(430+self.x-label.get_width()/2-scrollx,self.y-label.get_height()/2-25))
 					screen.blit(f2,(430+self.x-f2.get_width()/2-scrollx,self.y-f2.get_height()/2))
 					if self.call == "zac1":
 						print (430+self.x-f2.get_width()/2-scrollx,self.y-f2.get_height()/2)
 				if players[call].mark == True:
-					screen.blit(pygame.image.load("Images/"+"mark.png").convert_alpha(),(430+random.randint(-30*pow(1.25,self.amp-players[call].hb),30*pow(1.25,self.amp-players[call].hb))+self.x-20-scrollx,self.y+random.randint(-30*pow(1.25,self.amp-players[call].hb),30*pow(1.25,self.amp-players[call].hb))-20))
+					try:
+						screen.blit(pygame.image.load("Images/"+"mark.png").convert_alpha(),(430+random.randint(-30*pow(1.25,self.amp-players[call].hb),30*pow(1.25,self.amp-players[call].hb))+self.x-20-scrollx,self.y+random.randint(-30*pow(1.25,self.amp-players[call].hb),30*pow(1.25,self.amp-players[call].hb))-20))
+					except:
+						pass
 			if (self.y>680-map[int(self.x+430)/20]*20+20):
 				self.alive = False
 			if (bmap[int(self.x+430)/20]!=-1 and self.y>680-map[int(self.x+430)/20]*20):
@@ -670,10 +674,11 @@ class Bot(Player):
 		
 
 class Bullet(object):
-	def __init__(self,x,y,rt,master):
+	def __init__(self,x,y,rt,master,id=random.randint(0,1000)):
 		self.x = x
 		self.y = y
 		self.rt = rt
+		self.id = id
 		self.master = master
 		self.speed = 5*pow(1.25,self.master.bs)
 		self.range = 500*pow(1.25,self.master.range)
@@ -788,10 +793,10 @@ class Bomb(object):
 		return bmap
 	def render(self,screen,scrollx,map,bmap,exp,score,players):
 		if self.alive:
-			self.x+=self.vx
-			self.y-=self.vu
-			self.y+=self.vd
-			self.vd+=self.a/140.
+			self.x+=self.vx*2
+			self.y-=self.vu*2
+			self.y+=self.vd*2
+			self.vd+=self.a/140.*2
 			img = pygame.image.load("Images/"+"bomb.png").convert_alpha()
 			screen.blit(img,(self.x+430-scrollx,self.y))
 			if (self.y>680-map[int(self.x+430)/20]*20+20):
@@ -903,11 +908,11 @@ class Explosion(object):
 			img = pygame.transform.scale(self.img,(int(self.count*20),int(self.count*20)))
 			screen.blit(img,(self.x+430-scrollx-img.get_width()/2,self.y-img.get_width()/2))
 			if not self.flip:
-				self.count+=0.2
+				self.count+=0.4
 				if self.count>self.radius:
 					self.flip = True
 			else:
-				self.count-=0.2
+				self.count-=0.4
 
 class Turret(object):
 	def __init__(self,x,y,team):

@@ -130,10 +130,11 @@ def read(id):
 			if cmd == 7:
 				players[g[1]].gun = int(g[2])
 			if cmd == 8:
-				bullets[int(g[1])].x = int(g[2])
-				bullets[int(g[1])].y = int(g[3])
-				if g[1] == call:
-					sys.exit(0)
+				#bullets[int(g[1])].x = int(g[2])
+				#bullets[int(g[1])].y = int(g[3])
+				#if g[1] == call:
+				#	sys.exit(0)
+				pass
 			if cmd == 9:
 				players[g[1]].bomb = int(g[2])
 			if cmd == 10:
