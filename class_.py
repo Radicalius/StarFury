@@ -411,55 +411,18 @@ class Player(object):
 					score.s2-=25
 				self.expd = True
 			if ti.time()-self.dtime>10*pow(1.25,-self.rr) and self.airfield!=-1:
-				an = 0
-				x = 0
-				if self.team == "1":	
-					x = len(bmap)/2
-					an = 0
-					for i in range(len(bmap)/2):
-						if bmap[x] == -3:
-							an+=1
-							print self.team,an,self.airfield-1
-						if an == self.airfield-1 or self.airfield>4 and an == self.airfield-4:
-							self.x = x*20-430
-							self.y = 680-map[int(self.x+430)/20]*20+10
-							self.expd = False
-							self.alive = True
-							self.speed = 0
-							if self.x<5000:
-								self.rt = 180
-							else:
-								self.rt = 180
-							self.ax = i
-							break
-						x-=1
+				#self.x = self.airfield*20+810
+				#self.y = 680-map[self.airfield]*20+10
+				self.expd = False
+				self.alive = True
+				self.speed = 0
+				if self.x<5000:
+					self.rt = 180
 				else:
-					print "2 is dead"
-					an = 1
-					x = len(bmap)/2
-					for i in range(len(bmap)/2):	
-						if bmap[i]==-3:
-							an+=1
-							print self.team,an,self.airfield-1
-						if an == self.airfield-1:
-							self.x = x*20-430
-							try:
-								self.y = 680-map[int(self.x+430)/20]*20+10
-							except:
-								print len(map),self.x/20
-								self.y = 680-map[int(self.x)/20]*20+10
-							self.expd = False
-							self.alive = True
-							print "in"
-							self.speed = 0
-							if self.x<5000:
-								self.rt = 180
-							else:
-								self.rt = 180
-							self.ax = i
-							break
-						x+=1
+					self.rt = 180
+				self.landed = True	
 				
+
 	def run(self,map,bmap,bullets,bombs,rockets,score,ss,players):
 		if self.alive:
 			if self.stealth or self.mark or self.speed>pow(1.25,self.sstat):
@@ -590,47 +553,18 @@ class Player(object):
 				score.update = True
 				self.expd = True
 			if ti.time()-self.dtime>10*pow(1.25,-self.rr):
-				an = 0
-				x = 0
-				if self.team == "1":
-					x = len(bmap)/2
-					an = 0
-					for i in range(len(bmap)/2):
-						if bmap[x] == -3:
-							an+=1
-						if an == self.airfield:
-							self.x = x*20-410
-							self.y = 680-map[int(self.x+430)/20]*20+10
-							self.expd = False
-							self.alive = True
-							self.speed = 0
-							if self.x<5000:
-								self.rt = 180
-							else:
-								self.rt = 180
-							self.ax = i
-							break
-						x-=1
+				self.x = self.airfield*20-430
+				print self.airfield,len(bmap)*20-860
+				#sys.exit()
+				self.y = 680-map[(self.x+430)/20]*20+10
+				self.expd = False
+				self.alive = True
+				self.speed = 0
+				if self.x<5000:
+					self.rt = 0
 				else:
-					an = 4
-					x = len(bmap)/2
-					for i in range(len(bmap)/2,len(bmap)-1):	
-						if bmap[i]==-3:
-							an+=1
-						if an == self.airfield:
-							self.x = i*20+810
-							#print self.x,20*500
-							#sys.exit()
-							self.y = 680-map[int(self.x+430)/20]*20+10
-							self.expd = False
-							self.alive = True
-							self.speed = 0
-							if self.x<5000:
-								self.rt = 180
-							else:
-								self.rt = 180
-							self.ax = i
-							break	
+					self.rt = 180	
+				self.landed = True
 
 class Bot(Player):
 	def __init__(self,call,clas,team,af):

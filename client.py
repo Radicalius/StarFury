@@ -205,7 +205,10 @@ def read(id):
 					s1+=i+" "
 				cats.append("["+g[1]+"] "+s1)
 		except:
-			print sys.exc_info()
+			try:
+				print sys.exc_info()
+			except:
+				pass
 
 thread.start_new(read,(1,))
 

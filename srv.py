@@ -22,13 +22,13 @@ score1 = 0
 score2 = 0
 victor = None
 
-playernum = 6
+playernum = 2
 length = 500
 playerc = 0
 start = False
 af1 = 0
 af2 = 0
-bots = 5
+bots = 0
 
 last = random.randint(1,10)
 map.append(860/20)
@@ -60,35 +60,44 @@ for i in range(length+3):
 
 sx = int(0.0625*length)
 mx = int(0.75*length)
-for i in range(playernum):
-	if i<playernum/2:
-		x = i*int(length*0.0625)+sx
-		bmap[x] = -3
-		bmap[x-9] = 5
-		bmap[x-2] = 4
-		bmap[x-1] = 7
-		bmap[x-3] = 7
-		for i in range(1,10):
-			bmap[x+i] = -2
-			map[x+i] = map[x]	
-		map[x-1] = map[x]	
-		map[x-2] = map[x]
-		map[x-3] = map[x]	
-	else:
-		x = -(i-3)*int(length*0.0625)-sx
-		bmap[x] = -3
-		bmap[x+9] = 5
-		bmap[x+2] = 4
-		bmap[x+1] = 7
-		bmap[x+3] = 7
-		for i in range(1,10):
-			bmap[x-i] = -2
-			map[x-i] = map[x]	
-		map[x+1] = map[x]	
-		map[x+2] = map[x]
-		map[x+3] = map[x]
-		print x	
+afs = []
 
+if playernum%2 == 0:
+	ghj = playernum
+else:
+	ghj = playernum+1
+
+afs = [0]*ghj
+
+for i in range(ghj/2):
+	x = i*int(length*0.0625)+sx
+	bmap[x] = -3
+	bmap[x-9] = 5
+	bmap[x-2] = 4
+	bmap[x-1] = 7
+	bmap[x-3] = 7
+	for j in range(1,10):
+		bmap[x+j] = -2
+		map[x+j] = map[x]	
+	map[x-1] = map[x]	
+	map[x-2] = map[x]
+	map[x-3] = map[x]
+	bmap[-x] = -3
+	bmap[-x+9] = 5
+	bmap[-x+2] = 4
+	bmap[-x+1] = 7
+	bmap[-x+3] = 7
+	for j in range(1,10):
+		bmap[-x-j] = -2
+		map[-x-j] = map[-x]	
+	map[-x+1] = map[-x]	
+	map[-x+2] = map[-x]
+	map[-x+3] = map[-x]
+	afs[i] = x
+	afs[ghj/2-i] = length-x
+
+afs = sorted(afs)
+print afs
 map[1] = 4
 for i in range(2,10):
 	map[i] = 4
@@ -262,6 +271,9 @@ def run(id):
 
 thread.start_new(run,(1,))
 
+af = 0
+af1 = 0
+af2 = -1
 while True:
 	inp = ss.recvfrom(4048)
 	g = inp[0].split(" ")
@@ -274,15 +286,13 @@ while True:
 			print g[1]+" joined..."
 			ss.sendto("0"+mapstring,addr)
 			ss.sendto("1"+bmapstring,addr)
-			af = 0
+			print afs[af],af
 			if g[3] == "1":
-				af = af1	
-				af1+=1
+				players[g[1]] = Player(g[1],addr,g[2],g[3],afs[af1])
+				af+=1
 			else:		
-				af = af2+playernum/2
-				af2+=1
-			print g[1],af
-			players[g[1]] = Player(g[1],addr,g[2],g[3],af)
+				players[g[1]] = Player(g[1],addr,g[2],g[3],afs[af2])
+				af2-=1
 			for i in players.keys():
 				ss.sendto("2 "+i+" "+players[i].class_+" "+players[i].team+" "+str(af),addr)
 				print i
