@@ -27,7 +27,7 @@ class Lock(object):
 	def get(self):
 		return self.lock
 	
-font = pygame.font.SysFont("Sans",12)
+font = pygame.font.Font("",12)
 
 stats = {"Ammo":0,"Speed":1,"Handling":2,"Cal":12,"RoF":3,"BS":4,"Range":5,"Amp":6,"Cooldown":7,"Duration":8,"AoE":9,"HS":10,"HB":11,"Caliber":12,"RR":13,"Slot":14}
 

@@ -38,13 +38,14 @@ scrollx = 0
 upgrades = [["Ammo", "Range","Caliber","RoF","Bullet Speed"],["Power","Duration","Cooldown","AOE",""],["Speed","Handling","Heat Signature","Hit Box","Respawn Rate"]]
 
 screen = pygame.display.set_mode((860,680),0,32)
+pygame.display.set_caption("StarFury")
 
 text = pygame.image.load("Images/"+"text.png").convert()
 bg = pygame.image.load("Images/"+"bg.png").convert()
 shade = pygame.image.load("Images/"+"shade.png").convert_alpha()
 fighter = pygame.image.load("Images/"+"fighter.png").convert_alpha()
 target = pygame.image.load("Images/"+"target.png").convert_alpha()
-font = pygame.font.SysFont("Sans",20)
+font = pygame.font.Font("font.ttf",20)
 victory = None
 vcount = 0
 
@@ -225,7 +226,7 @@ mp = False
 chat = False
 text1 = ""
 
-f2 = pygame.font.SysFont("Sans",40)
+f2 = pygame.font.Font("font.ttf",40)
 callsign = ""
 class_ = "Fighter"
 server = "localhost"
