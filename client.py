@@ -15,6 +15,9 @@ start = "lobby"
 #host = (sys.argv[4],int(sys.argv[5]))
 host = ("localhost",8001)
 
+log = open("log.txt",'w')
+sys.stdout = log
+
 map = []
 bmap = []
 exp = []
@@ -235,6 +238,8 @@ selected = 0
 classn = 0
 team = 0
 teamn = 0
+
+sock = socket(AF_INET,SOCK_STREAM)
 
 while True:
 	if start == "running":

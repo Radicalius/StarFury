@@ -15,6 +15,9 @@ start = "lobby"
 #host = (sys.argv[4],int(sys.argv[5]))
 host = ("localhost",8001)
 
+log = open("log.txt",'w')
+sys.stdout = log
+
 map = []
 bmap = []
 exp = []
@@ -45,7 +48,7 @@ bg = pygame.image.load("Images/"+"bg.png").convert()
 shade = pygame.image.load("Images/"+"shade.png").convert_alpha()
 fighter = pygame.image.load("Images/"+"fighter.png").convert_alpha()
 target = pygame.image.load("Images/"+"target.png").convert_alpha()
-font = pygame.font.Font("",20)
+font = pygame.font.Font("font.ttf",20)
 victory = None
 vcount = 0
 
@@ -235,6 +238,8 @@ selected = 0
 classn = 0
 team = 0
 teamn = 0
+
+sock = socket(AF_INET,SOCK_STREAM)
 
 while True:
 	if start == "running":

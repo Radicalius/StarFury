@@ -22,7 +22,7 @@ score1 = 0
 score2 = 0
 victor = None
 
-playernum = 4
+playernum = 2
 length = 500
 playerc = 0
 start = False
@@ -270,6 +270,23 @@ def run(id):
 			tcount = 0
 
 thread.start_new(run,(1,))
+
+#lusers = {}
+#sock = socket(AF_INET,SOCK_STREAM)
+#sock.bind(('',8001))
+
+#def lobby_accept(id):
+#	global lusers
+#	while True:
+#		sock.listen(1)
+#		sock1,addr = sock.accept()
+#		ti.sleep(1)
+#		len = sock.recv(2)
+#		call = sock.recv(int(len))
+#		lusers[call] = [sock1,"fighter","0"]
+#		print lusers
+
+#thread.start_new(lobby_accept,(1,))
 
 af = 0
 af1 = 0
