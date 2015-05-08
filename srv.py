@@ -4,7 +4,7 @@ from socket import *
 from class_ import *
 
 ss = socket(AF_INET,SOCK_DGRAM)
-ss.bind(("",8001))
+ss.bind(("",8000))
 
 score = Score()
 
@@ -22,7 +22,7 @@ score1 = 0
 score2 = 0
 victor = None
 
-playernum = 1
+playernum = int(sys.argv[1])
 length = 500
 playerc = 0
 start = False
@@ -111,19 +111,19 @@ bmap[2] = 5
 
 bmap[200] = 7
 bmap[199] = 4
-bmap[190] = 5
+bmap[192] = 5
 
 bmap[175] = 7
 bmap[174] = 4
-bmap[165] = 5
+bmap[167] = 5
 
 bmap[-175] = 7
 bmap[-174] = 4
-bmap[-165] = 5
+bmap[-167] = 5
 
 bmap[-200] = 7
 bmap[-199] = 4
-bmap[-190] = 5
+bmap[-192] = 5
 
 
 bmap[-11] = 10
@@ -213,6 +213,7 @@ def update(id):
 					ss.sendto("17 1",players[i].addr)
 				else:
 					ss.sendto("17 0",players[i].addr)
+		sys.exit(0)
 	if victor==1:
 		for i in players.keys():
 			if not players[i].ai:
@@ -220,10 +221,10 @@ def update(id):
 					ss.sendto("17 1",players[i].addr)
 				else:
 					ss.sendto("17 0",players[i].addr)
-	if random.randint(1,300) == 1:
-		print "in"
+		sys.exit(0)
+	if random.randint(1,500) == 1:
 		while True:
-			index = random.randint(0,250)
+			index = random.randint(0,500)
 			if bmap[index] == -1:
 				bmap[index] = random.choice([0,1,2,3,8,9])
 				for k in players.keys():
