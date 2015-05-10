@@ -17,7 +17,7 @@ start = "lobby"
 host = ("localhost",8001)
 
 log = open("log.txt",'w')
-#sys.stdout = log
+sys.stdout = log
 
 map = []
 bmap = []
