@@ -307,12 +307,12 @@ while True:
 			print afs[af],af
 			if g[3] == "1":
 				players[g[1]] = Player(g[1],addr,g[2],g[3],afs[af1])
-				af+=1
+				af1+=1
 			else:		
 				players[g[1]] = Player(g[1],addr,g[2],g[3],afs[af2])
 				af2-=1
 			for i in players.keys():
-				ss.sendto("2 "+i+" "+players[i].class_+" "+players[i].team+" "+str(af),addr)
+				ss.sendto("2 "+i+" "+players[i].class_+" "+players[i].team+" "+str(players[i].airfield),addr)
 				print i
 			for i in players.keys():
 				if not players[i].ai:

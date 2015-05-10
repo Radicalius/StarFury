@@ -401,6 +401,7 @@ class Player(object):
 			#	self.speed = pow(1.25,self.sstat)
 			
 		else:
+			print True
 			if not self.expd:
 				self.dtime = ti.time()
 				exp.append(Explosion(self.x,self.y,4))
@@ -452,6 +453,7 @@ class Player(object):
 					self.falling = False
 			if (self.y>680-map[int(self.x+430)/20]*20+20):
 					self.alive = False
+					print "It was the ground",self.x
 			if (bmap[int(self.x+430)/20]!=-1 and self.y>680-map[int(self.x+430)/20]*20):
 				if bmap[int(self.x+430)/20]!=-2 and bmap[int(self.x+430)/20]!=-3:
 					self.alive = False
@@ -553,9 +555,13 @@ class Player(object):
 				score.update = True
 				self.expd = True
 			if ti.time()-self.dtime>10*pow(1.25,-self.rr):
-				self.x = self.airfield*20-430
-				print self.airfield,len(bmap)*20-860
-				#sys.exit()
+				if self.team == "1":
+					if len(players)<3:
+						self.x = self.airfield*20-420
+					else:
+						self.x = self.airfield*20+420-10*20
+				else:
+					self.x = self.airfield*20-340
 				self.y = 680-map[(self.x+430)/20]*20+10
 				self.expd = False
 				self.alive = True

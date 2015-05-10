@@ -402,7 +402,6 @@ while True:
 			screen.blit(font.render(str(int(players[call].bombs)),True,(255,255,255)),(20,35))
 			screen.blit(pygame.image.load("Images/"+"missle.png").convert_alpha(),(5,65))
 			screen.blit(font.render(str(int(players[call].rockets)),True,(255,255,255)),(20,60))
-			#if players[call].powdur<players[call].powmax:
 			screen.blit(font.render(str(int(players[call].powdur)),True,(255,255,255)),(20,85))
 			a = font.render(str(score.s1)+" vs "+str(score.s2),True,(255,255,255))
 			b = font.render("Credits: "+str(players[call].gold),True,(255,255,255))
