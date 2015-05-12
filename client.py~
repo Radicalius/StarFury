@@ -17,7 +17,7 @@ start = "lobby"
 host = ("localhost",8001)
 
 log = open("log.txt",'w')
-#sys.stdout = log
+sys.stdout = log
 
 map = []
 bmap = []
@@ -255,6 +255,12 @@ team = 0
 class_2 = 0
 rdy1 = False
 
+lighting = pygame.Surface((860,680))
+lighting.fill((0,0,0))
+lighting.set_alpha(200)
+
+lights = []
+
 while True:
 	if start == "running":
 		#print players["Bot0"].speed
@@ -338,7 +344,7 @@ while True:
 		j = 0
 		screen.fill((255,255,255))
 		screen.blit(bg,(0,0))
-
+		lighting.fill((0,0,0))
 		for i in bullets:
 			i.render(screen,scrollx,map,bmap)
 		for i in bombs:
@@ -346,7 +352,7 @@ while True:
 		for i in rockets:
 			i.render(screen,scrollx,map,bmap,mx,my,exp)
 		for i in exp:
-			i.render(screen,scrollx)
+			i.render(screen,scrollx,lighting)
 		for i in map:
 			for k in range(i):
 				screen.blit(text,(j*20-scrollx,680-k*20))
@@ -357,7 +363,7 @@ while True:
 			i.render(players,exp,scrollx,screen,bullets)
 		j = 0
 		for i in players.keys():
-			players[i].render(screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score)
+			players[i].render(screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score,lighting)
 			x = 0
 			if i == call and upgrade and players[i].landed:
 				for h in players[i].comps:
@@ -394,6 +400,9 @@ while True:
 			j+=1
 		if shot:
 			lastshot = ti.time()
+		for i in lights:
+			i.render(lighting)
+		screen.blit(lighting,(0,0))
 		try:
 			screen.blit(target,(mx-10,my-10))
 			screen.blit(pygame.image.load("Images/"+"bullet.png").convert_alpha(),(5,15))

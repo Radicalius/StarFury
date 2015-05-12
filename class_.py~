@@ -210,6 +210,7 @@ class Player(object):
 		self.lastmissle = 0
 		self.lastshot = 0
 		self.lastbomb = 0
+		self.light = Light(0,0,(255,255,255),0.3,100)
 		if self.class_ == "fighter":
 			self.sstat+=0.5
 			self.hb+=0.5
@@ -241,7 +242,7 @@ class Player(object):
 	def lock(self,a):
 		self.slock.lock()
 		print self.slock.lock
-	def render(self,screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score):
+	def render(self,screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score,lighting):
 		global score1,score2
 		if self.alive:
 			if self.stealth or self.mark or self.speed>pow(1.25,self.sstat):
@@ -278,6 +279,9 @@ class Player(object):
 					fighter = pygame.transform.flip(fighter,False,True)
 				f2 = pygame.transform.rotate(fighter,self.rt)
 				screen.blit(f2,(430-f2.get_width()/2,self.y-f2.get_height()/2))
+				self.light.x = 430
+				self.light.y = self.y
+				self.light.render(lighting)
 			else:
 				label = font.render(self.call,True,(155,155,155))
 				fighter = pygame.image.load("Images/"+self.class_+self.team+".png").convert_alpha()
@@ -839,6 +843,7 @@ class Explosion(object):
 		self.x = x
 		self.y = y
 		self.count = 0.1
+		self.light = Light(self.x,self.y,(255,255,255),0.3,1)
 		self.radius = rad
 		self.flip = False
 		try:
@@ -846,7 +851,7 @@ class Explosion(object):
 			self.sound.play()
 		except:
 			pass
-	def render(self,screen,scrollx):
+	def render(self,screen,scrollx,lighting):
 		if self.count>0:
 			self.img = pygame.image.load("Images/"+"explosion.png").convert_alpha()
 			img = pygame.transform.scale(self.img,(int(self.count*20),int(self.count*20)))
@@ -857,6 +862,10 @@ class Explosion(object):
 					self.flip = True
 			else:
 				self.count-=0.4
+			if self.count>0:
+				self.light.x = self.x+430-scrollx
+				self.light.radius = int(self.count*300)
+				self.light.render(lighting)
 
 class Turret(object):
 	def __init__(self,x,y,team):
@@ -903,3 +912,18 @@ class Turret(object):
 				self.lastshot = ti.time()
 				bullets.append(Bullet(self.x-430,self.y+10,self.rt+90+sin(self.count)*5,self))
 				self.count+=1
+
+class Light(object):
+	def __init__(self,x,y,color,intensity,radius):
+		self.x = x
+		self.y = y
+		self.color = color
+		self.intensity = intensity
+		self.radius = radius
+		self.image = None
+	def render(self,screen):
+		self.image = pygame.transform.scale(pygame.image.load("Images/light.png").convert(),(self.radius,self.radius))
+		self.image.set_alpha(255.*self.intensity)
+		screen.blit(self.image,(self.x-self.radius/2,self.y-self.radius/2))
+		
+		
