@@ -5,6 +5,8 @@ from math import *
 import time as ti
 pygame.init()
 
+pyg = True
+
 #call = sys.argv[1]#raw_input("Callsign: ")
 #team = sys.argv[3] #raw_input("Team [1,2]: ")
 #class_ = sys.argv[2] #raw_input("Class[Fighter,Interceptor,Bomber]: ")

@@ -1,3 +1,5 @@
+pyg = False
+
 import socket,random,thread,sys
 import time as ti
 from socket import *

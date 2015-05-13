@@ -210,7 +210,7 @@ class Player(object):
 		self.lastmissle = 0
 		self.lastshot = 0
 		self.lastbomb = 0
-		self.light = Light(0,0,(255,255,255),0.3,100)
+		self.light = None
 		if self.class_ == "fighter":
 			self.sstat+=0.5
 			self.hb+=0.5
@@ -244,6 +244,8 @@ class Player(object):
 		print self.slock.lock
 	def render(self,screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score,lighting):
 		global score1,score2
+		if self.light == None:
+			self.light = Light(0,0,(0,0,255),0.3,100)
 		if self.alive:
 			if self.stealth or self.mark or self.speed>pow(1.25,self.sstat):
 				self.powdur-=1
@@ -921,8 +923,30 @@ class Light(object):
 		self.intensity = intensity
 		self.radius = radius
 		self.image = None
+		try:
+			self.master_image = pygame.image.load("Images/light.png")
+			self.rendered = False
+			self.pix_array = None
+			if not self.rendered:
+				self.pix_array = pygame.surfarray.pixels3d(self.master_image)
+				c = 0
+				d = 0
+				for i in self.pix_array:
+					d = 0
+					for j in i:
+						k = [0,0,0]
+						k[0] = j[0]/255.*self.color[0]
+						k[1] = j[1]/255.*self.color[1]	
+						k[2] = j[2]/255.*self.color[2]
+						self.pix_array[c][d] = k
+						d+=1
+					c+=1
+				self.master_image = pygame.surfarray.make_surface(self.pix_array)
+				self.rendered = True
+		except:
+			print sys.exc_info()
 	def render(self,screen):
-		self.image = pygame.transform.scale(pygame.image.load("Images/light.png").convert(),(self.radius,self.radius))
+		self.image = pygame.transform.scale(self.master_image,(self.radius,self.radius))
 		self.image.set_alpha(255.*self.intensity)
 		screen.blit(self.image,(self.x-self.radius/2,self.y-self.radius/2))
 		
