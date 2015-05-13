@@ -1,4 +1,4 @@
-import socket,sys,pygame,thread
+import socket,sys,pygame,thread,urllib
 from socket import *
 from class_ import *
 from math import *
@@ -260,6 +260,8 @@ lighting.fill((0,0,0))
 lighting.set_alpha(200)
 
 lights = []
+servers = urllib.urlopen("http://starfury.eu5.org/servers.txt").read().split("\n")
+sserver = 0
 
 while True:
 	if start == "running":
@@ -477,13 +479,16 @@ while True:
 					elif event.key == K_LEFT and selected == 2:
 						teamn-=1
 					elif event.key == K_RETURN:
-						host = (server,int(port))
-						call = callsign
-						#s.sendto("0 "+callsign+" "+class_.lower()+" "+str(team),host)
-						#start = "waiting"
-						s.sendto("/player "+call,host)
-						state = 1
-						selected = 0
+						if selected == len(servers):
+							#host = (server,int(port))
+							call = callsign
+							#s.sendto("0 "+callsign+" "+class_.lower()+" "+str(team),host)
+							#start = "waiting"
+							s.sendto("/player "+call,host)
+							state = 1
+							selected = 0
+						else:
+							host = (servers[selected-1].split("\t")[5],int(servers[selected-1].split("\t")[6]))
 					else:
 						if selected == 0:
 							if event.key == K_BACKSPACE:
@@ -533,36 +538,51 @@ while True:
 							selected-=1
 		screen.fill((0,0,0))
 		t = f2.render("STARFURY",True,(255,255,255))
+		print servers
 		if state == 0:
 			if selected == 0:
 				t2 = font.render("CALLSIGN: "+callsign,True,(155,155,255))
 			else:
 				t2 = font.render("CALLSIGN: "+callsign,True,(255,255,255))
-			if selected == 1:
-				t3 = font.render("CLASS: "+class_,True,(155,155,255))
-			else:
-				t3 = font.render("CLASS: "+class_,True,(255,255,255))
-			if selected == 2:
-				t45 = font.render("TEAM: "+str(team),True,(155,155,255))
-			else:
-				t45 = font.render("TEAM: "+str(team),True,(255,255,255))
-			if selected == 3:
-				t4 = font.render("SERVER: "+server,True,(155,155,255))
-			else:
-				t4 = font.render("SERVER: "+server,True,(255,255,255))
-			if selected == 4:
-				t5 = font.render("PORT: "+port,True,(155,155,255))
-			else:
-				t5 = font.render("PORT: "+port,True,(255,255,255))
-			if selected == 5:
+			#if selected == 1:
+				#t3 = font.render("CLASS: "+class_,True,(155,155,255))
+			#else:
+			t3 = font.render("SERVERS",True,(255,255,255))
+			#if selected == 2:
+		#		t45 = font.render("TEAM: "+str(team),True,(155,155,255))
+		#	else:
+		#		t45 = font.render("TEAM: "+str(team),True,(255,255,255))
+		#	if selected == 3:
+		#		t4 = font.render("SERVER: "+server,True,(155,155,255))
+		#	else:
+			t4 = font.render("SERVER: "+server,True,(255,255,255))
+		#	if selected == 4:
+		#		t5 = font.render("PORT: "+port,True,(155,155,255))
+		#	else:
+		#		t5 = font.render("PORT: "+port,True,(255,255,255))
+			if selected == len(servers):
 				t6 = font.render("CONNECT",True,(155,155,255))
 			else:
 				t6 = font.render("CONNECT",True,(255,255,255))
-			screen.blit(t2,(430-t.get_width()/2-200,290-t2.get_height()/2))
-			screen.blit(t3,(430-t.get_width()/2-200,340-t3.get_height()/2))
-			screen.blit(t45,(430-t.get_width()/2-200,390-t4.get_height()/2))
-			screen.blit(t4,(430-t.get_width()/2-200,440-t4.get_height()/2))
-			screen.blit(t5,(430-t.get_width()/2-200,490-t5.get_height()/2))
+			x = 1
+			for l in servers:
+				if l!='':
+					g = l.split("\t")
+					if selected == x:
+						st = ""
+						st+=g[0]+" "*(50-len(g[0]))+g[1]+" "*(20-len(g[1]))+g[2]+" "*(20-len(g[2]))+g[3]+" "*(20-len(g[3]))+g[4]
+						t45 = font.render(st,True,(155,155,255))
+					else:
+						st = ""
+						st+=g[0]+" "*(50-len(g[0]))+g[1]+" "*(20-len(g[1]))+g[2]+" "*(20-len(g[2]))+g[3]+" "*(20-len(g[3]))+g[4]
+						t45 = font.render(st,True,(255,255,255))
+					screen.blit(t45,(75,280-t45.get_height()/2+x*30))
+					x+=1
+			screen.blit(t2,(430-t.get_width()/2-200,190-t2.get_height()/2))
+			screen.blit(t3,(430-t.get_width()/2-200,230-t3.get_height()/2))
+			#screen.blit(t45,(430-t.get_width()/2-200,390-t4.get_height()/2))
+			#screen.blit(t4,(430-t.get_width()/2-200,440-t4.get_height()/2))
+			#screen.blit(t5,(430-t.get_width()/2-200,490-t5.get_height()/2))
 			screen.blit(t6,(430-t6.get_width()/2,590-t6.get_height()/2))
 		else:
 			h = f3.render("BLUE",True,(100,100,155))
