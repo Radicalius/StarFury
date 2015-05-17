@@ -350,7 +350,9 @@ class Player(object):
 					bullets.append(Bullet(self.x+cos(self.rt*pi/180)*15,self.y-sin(self.rt*pi/180)*15,self.rt,self))
 				else:
 					bullets.append(Bullet(self.x+cos(self.rt*pi/180)*-15,self.y-sin(self.rt*pi/180)*-15,180+self.rt,self))
-				pygame.mixer.Sound("Sounds/"+"laser.wav").play()
+				cd = pygame.mixer.Sound("Sounds/"+"laser.wav").play()
+				dist = self.x-scrollx
+				if dist>=0:
 			if self.bomb == 1 and ti.time()-self.lastbomb>1/5.*pow(1.25,-self.rof) and self.bombs>0:
 				self.lastbomb = ti.time()
 				self.bombs-=1

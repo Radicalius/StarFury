@@ -43,6 +43,9 @@ upgrades = [["Ammo", "Range","Caliber","RoF","Bullet Speed"],["Power","Duration"
 
 screen = pygame.display.set_mode((860,680),0,32)
 pygame.display.set_caption("StarFury")
+lobby = pygame.mixer.music.load("Sounds/lobbytheme.wav")
+gamem = pygame.mixer.music.load("Sounds/lobby2.wav")
+playing = None
 
 text = pygame.image.load("Images/"+"text.png").convert()
 bg = pygame.image.load("Images/"+"bg.png").convert()
@@ -265,6 +268,10 @@ sserver = 0
 
 while True:
 	if start == "running":
+		if playing!="game":
+			pygame.mixer.music.load("Sounds/lobby2.wav")
+			pygame.mixer.music.play(-1)
+			playing = "game"
 		#print players["Bot0"].speed
 		mx,my = pygame.mouse.get_pos()
 		for event in pygame.event.get():
@@ -458,6 +465,10 @@ while True:
 		screen.blit(t,(430-t.get_width()/2,340-t.get_height()/2))
 		pygame.display.update()
 	else:
+		if playing!="lobby":
+			pygame.mixer.music.load("Sounds/lobbytheme.wav")
+			pygame.mixer.music.play(-1)
+			playing = "lobby"
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				pygame.display.quit()
@@ -566,18 +577,21 @@ while True:
 				t6 = font.render("CONNECT",True,(255,255,255))
 			x = 1
 			for l in servers:
-				if l!='':
-					g = l.split("\t")
-					if selected == x:
-						st = ""
-						st+=g[0]+" "*(50-len(g[0]))+g[1]+" "*(20-len(g[1]))+g[2]+" "*(20-len(g[2]))+g[3]+" "*(20-len(g[3]))+g[4]
-						t45 = font.render(st,True,(155,155,255))
-					else:
-						st = ""
-						st+=g[0]+" "*(50-len(g[0]))+g[1]+" "*(20-len(g[1]))+g[2]+" "*(20-len(g[2]))+g[3]+" "*(20-len(g[3]))+g[4]
-						t45 = font.render(st,True,(255,255,255))
-					screen.blit(t45,(75,280-t45.get_height()/2+x*30))
-					x+=1
+				try:
+					if l!='':
+						g = l.split("\t")
+						if selected == x:
+							st = ""
+							st+=g[0]+" "*(50-len(g[0]))+g[1]+" "*(20-len(g[1]))+g[2]+" "*(20-len(g[2]))+g[3]+" "*(20-len(g[3]))+g[4]
+							t45 = font.render(st,True,(155,155,255))	
+						else:
+							st = ""
+							st+=g[0]+" "*(50-len(g[0]))+g[1]+" "*(20-len(g[1]))+g[2]+" "*(20-len(g[2]))+g[3]+" "*(20-len(g[3]))+g[4]
+							t45 = font.render(st,True,(255,255,255))	
+						screen.blit(t45,(75,280-t45.get_height()/2+x*30))
+						x+=1
+				except:
+					pass
 			screen.blit(t2,(430-t.get_width()/2-200,190-t2.get_height()/2))
 			screen.blit(t3,(430-t.get_width()/2-200,230-t3.get_height()/2))
 			#screen.blit(t45,(430-t.get_width()/2-200,390-t4.get_height()/2))
