@@ -350,9 +350,6 @@ class Player(object):
 					bullets.append(Bullet(self.x+cos(self.rt*pi/180)*15,self.y-sin(self.rt*pi/180)*15,self.rt,self))
 				else:
 					bullets.append(Bullet(self.x+cos(self.rt*pi/180)*-15,self.y-sin(self.rt*pi/180)*-15,180+self.rt,self))
-				cd = pygame.mixer.Sound("Sounds/"+"laser.wav").play()
-				dist = self.x-scrollx
-				if dist>=0:
 			if self.bomb == 1 and ti.time()-self.lastbomb>1/5.*pow(1.25,-self.rof) and self.bombs>0:
 				self.lastbomb = ti.time()
 				self.bombs-=1
@@ -636,14 +633,20 @@ class Bullet(object):
 		self.range = 500*pow(1.25,self.master.range)
 		self.hb = 5*pow(1.25,self.master.hb)
 		self.alive = True
-		try:
-			self.sound = pygame.mixer.Sound("Sounds/"+"laser.wav")
-			self.sound.set_volume(0.5)
-			self.sound.play()
-		except:
-			pass
+		self.played = False
 	def render(self,screen,scrollx,map,bmap):
 		if self.alive:
+			if not self.played:
+				self.sound = pygame.mixer.Sound("Sounds/"+"laser.wav")
+				dist = scrollx-self.x
+				right = (0.5+dist/10000.*0.5)/(1+dist/10000.)
+				left = (1-right)/(1+dist/10000.)
+				print left,right
+				try:
+					self.sound.play().set_volume(left,right)
+					self.played = True
+				except:	
+					self.played = True
 			global score1,score2
 			self.x+=cos(self.rt*pi/180)*self.speed*2
 			self.y-=sin(self.rt*pi/180)*self.speed*2
@@ -689,11 +692,7 @@ class Bomb(object):
 		self.expd = False
 		self.lock = False
 		self.master = master
-		try:
-			self.sound = pygame.mixer.Sound("Sounds/"+"bombfall.wav")
-			self.sound.play()
-		except:
-			pass
+		self.played = False
 	def run(self,bmap,map,score,players):
 		if self.alive:
 			self.x+=self.vx
@@ -744,6 +743,17 @@ class Bomb(object):
 				self.alive = False
 		return bmap
 	def render(self,screen,scrollx,map,bmap,exp,score,players):
+		if not self.played:
+			self.sound = pygame.mixer.Sound("Sounds/"+"bombfall.wav")
+			dist = scrollx-self.x
+			right = (0.5+dist/10000.*0.5)/(1+dist/10000.)
+			left = (1-right)/(1+dist/10000.)
+			print left,right
+			try:
+				self.sound.play().set_volume(left,right)
+				self.played = True
+			except:	
+				self.played = True
 		if self.alive:
 			self.x+=self.vx*2
 			self.y-=self.vu*2
@@ -787,6 +797,16 @@ class Bomb(object):
 		else:
 			self.sound.stop()
 			if not self.expd:
+				self.sound = pygame.mixer.Sound("Sounds/"+"explosion.wav")
+				dist = scrollx-self.x
+				right = (0.5+dist/10000.*0.5)/(1+dist/10000.)
+				left = (1-right)/(1+dist/10000.)
+				print left,right
+				try:
+					self.sound.play().set_volume(left,right)
+					self.played = True
+				except:	
+					self.played = True
 				self.expd = True
 				if self.lock:
 					exp.append(Explosion(self.x,self.y,2))
