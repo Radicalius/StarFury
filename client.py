@@ -266,6 +266,14 @@ lights = []
 servers = urllib.urlopen("http://starfury.eu5.org/servers.txt").read().split("\n")
 sserver = 0
 
+def update_list(id):
+	global servers
+	while True:
+		servers = urllib.urlopen("http://starfury.eu5.org/servers.txt").read().split("\n")
+		ti.sleep(2)
+
+thread.start_new(update_list,(1,))
+
 while True:
 	if start == "running":
 		if playing!="game":

@@ -1,14 +1,25 @@
 import socket,os,thread
 from socket import *
+from urllib import urlopen as get
+
+envars = {}
+
+f = open("lobby.cfg","r")
+for i in f.readlines():
+	if i[0]!="#" and i!="\n":
+		g = i.split(": ")
+		envars[g[0]] = g[1].strip()
+f.close()
 
 sock = socket(AF_INET,SOCK_DGRAM)
-sock.bind(('',8001))
+sock.bind(('',int(envars["Port"])))
 
 users = {}
 addrs = {}
 
 ready = False
 ingame = False
+status = "Lobby"
 
 def run_game(pnum):
 	global ingame
@@ -26,6 +37,14 @@ def run_game(pnum):
 	for j in users:
 		for k in users:
 			sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3],users[k][0])
+	global status
+	status = "Lobby"
+	update(status)	
+
+def update(status):
+	get("http://starfury.eu5.org/alter.php?name="+envars["Name"]+"&gamemode="+envars["Gamemode"]+"&map="+envars["Map"]+"&players="+str(len(users))+"/"+envars["Player Limit"]+"&status="+status+"&ip="+envars["IPv4"]+"&port="+envars["Port"])
+
+update("Lobby")
 
 while True:
 	inp,addr = sock.recvfrom(1024)
@@ -36,6 +55,7 @@ while True:
 			addrs[addr] = g[1]
 			for j in users:
 				sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3],addr)
+			update("Lobby")
 		if g[0] == "/team":
 			users[addrs[addr]][2] = g[1]
 			users[addrs[addr]][3] = "Prep"
@@ -52,6 +72,8 @@ while True:
 				ready = False
 		if ready == True:
 			print "Game Starting..."
+			status = "In Game"
+			update("In Game")
 			for j in users:
 				sock.sendto("/start 8000",users[j][0])
 			thread.start_new(run_game,(len(users),))
