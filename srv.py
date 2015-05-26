@@ -4,11 +4,25 @@ import socket,random,thread,sys
 import time as ti
 from socket import *
 from class_ import *
+import Mods
+from Mods import *
 
 ss = socket(AF_INET,SOCK_DGRAM)
 ss.bind(("",8000))
 
 score = Score()
+
+envars = {}
+f = open("lobby.cfg","r")
+for i in f.readlines():
+	if i[0]!="#" and i!="\n":
+		g = i.split(": ")
+		envars[g[0]] = g[1].strip()
+f.close()
+modnames = envars["Mods"].split(",")
+mods = []
+for i in modnames:
+	mods.append(eval(i+"."+i)())
 
 map = []
 bmap = []
@@ -47,9 +61,11 @@ for i in range(length):
 		map.append(last)
 map.append(860/20)
 bmap.append(-1)
+bnum = 0
 for i in range(length+3):
 	if bmap[-1] == 9:
 		bmap.append(8)
+		bnum+=1
 	else:
 		if random.randint(0,4) == 4 and map[i]>0:
 			if random.randint(0,3)!=0:
@@ -57,6 +73,7 @@ for i in range(length+3):
 			else:
 				bmap[-1] = 8
 				bmap.append(9)
+			bnum+=1
 		else:
 			bmap.append(-1)
 
@@ -133,6 +150,9 @@ bmap[-10] = 4
 bmap[-12] = 4
 bmap[-5] = 5
 bmap[-3] = 5
+
+for i in mods:
+	i.mapCreation(map,bmap)
 
 mapstring = ""
 bmapstring = ""
@@ -224,7 +244,7 @@ def update(id):
 				else:
 					ss.sendto("17 0",players[i].addr)
 		sys.exit(0)
-	if random.randint(1,500) == 1:
+	if random.randint(1,500) == 1 and bnum<200:
 		while True:
 			index = random.randint(0,500)
 			if bmap[index] == -1:
@@ -306,6 +326,8 @@ while True:
 			print g[1]+" joined..."
 			ss.sendto("0"+mapstring,addr)
 			ss.sendto("1"+bmapstring,addr)
+			ss.sendto("22 "+envars["Mods"],addr)
+			print "22 "+envars["Mods"]
 			print afs[af],af
 			if g[3] == "1":
 				players[g[1]] = Player(g[1],addr,g[2],g[3],afs[af1])

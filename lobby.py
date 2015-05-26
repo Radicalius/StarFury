@@ -42,7 +42,10 @@ def run_game(pnum):
 	update(status)	
 
 def update(status):
-	get("http://starfury.eu5.org/alter.php?name="+envars["Name"]+"&gamemode="+envars["Gamemode"]+"&map="+envars["Map"]+"&players="+str(len(users))+"/"+envars["Player Limit"]+"&status="+status+"&ip="+envars["IPv4"]+"&port="+envars["Port"])
+	try:
+		get("http://starfury.eu5.org/alter.php?name="+envars["Name"]+"&gamemode="+envars["Gamemode"]+"&map="+envars["Map"]+"&players="+str(len(users))+"/"+envars["Player Limit"]+"&status="+status+"&ip="+envars["IPv4"]+"&port="+envars["Port"])
+	except:
+		pass
 
 update("Lobby")
 

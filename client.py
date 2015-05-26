@@ -3,6 +3,8 @@ from socket import *
 from class_ import *
 from math import *
 import time as ti
+import Mods
+from Mods import *
 pygame.init()
 
 #call = sys.argv[1]#raw_input("Callsign: ")
@@ -18,6 +20,8 @@ host = ("localhost",8001)
 
 log = open("log.txt",'w')
 sys.stdout = log
+
+mods = []
 
 map = []
 bmap = []
@@ -64,7 +68,7 @@ for i in range(-3,12):
 	imgs[i] = pygame.image.load("Images/"+str(i)+".png").convert_alpha()
 
 def read(id):
-	global vcount,victory,start,host
+	global vcount,victory,start,host,mods
 	while True:
 		try:
 			inp = s.recvfrom(12000)
@@ -220,6 +224,11 @@ def read(id):
 				for i in g[2:]:
 					s1+=i+" "
 				cats.append("["+g[1]+"] "+s1)
+			if cmd == 22:
+				print "in"
+				for i in g[1].split(","):
+					mods.append(eval(i+"."+i)())
+				print mods
 		except:
 			try:
 				print sys.exc_info()
