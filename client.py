@@ -1,4 +1,4 @@
-import socket,sys,pygame,thread,urllib
+import socket,sys,pygame,thread,urllib,os
 from socket import *
 from class_ import *
 from math import *
@@ -279,6 +279,14 @@ lights = []
 servers = urllib.urlopen("http://starfury.eu5.org/servers.txt").read().split("\n")
 sserver = 0
 
+comps = []
+hulls = []
+for i in os.listdir("Components"):
+	if i.split(".")[1] == "cmp":
+		comps.append(Component.load(i))
+	else:
+		hulls.append(Component.load(i))
+
 def update_list(id):
 	global servers
 	while True:
@@ -489,7 +497,7 @@ while True:
 		t = font.render("Waiting for Players...",True,(255,255,255))
 		screen.blit(t,(430-t.get_width()/2,340-t.get_height()/2))
 		pygame.display.update()
-	else:
+	elif start == "lobby":
 		if playing!="lobby":
 			pygame.mixer.music.load("Sounds/lobbytheme.wav")
 			pygame.mixer.music.play(-1)
@@ -553,9 +561,10 @@ while True:
 				else:
 					if event.key == K_RETURN:
 						if selected == 0:
-							team+=1
-							c = ["fighter","interceptor","bomber"]
-							s.sendto("/class "+str(c[team%3]),host)
+							#team+=1
+							#c = ["fighter","interceptor","bomber"]
+							#s.sendto("/class "+str(c[team%3]),host)
+							start = "loadout"
 						if selected == 1:
 							if rdy1:
 								s.sendto("/ready Prep",host)
@@ -646,9 +655,9 @@ while True:
 					screen.blit(rdy,(250+430,290-cname.get_height()/2+ry))
 					ry+=50	
 			if selected == 0:
-				t2 = font.render("SWITCH CLASS",True,(155,155,255))
+				t2 = font.render("CHANGE LOADOUT",True,(155,155,255))
 			else:
-				t2 = font.render("SWITCH CLASS",True,(255,255,255))
+				t2 = font.render("CHANGE LOADOUT",True,(255,255,255))
 			if selected == 1:
 				t3 = font.render("READY",True,(155,155,255))
 			else:
@@ -661,4 +670,46 @@ while True:
 			screen.blit(t3,(430-t.get_width()/2+50,600-t3.get_height()/2))
 			screen.blit(t45,(430-t.get_width()/2+300,600-t4.get_height()/2))	
 		screen.blit(t,(430-t.get_width()/2,140-t.get_height()/2))
+		pygame.display.update()
+	else:
+		screen.fill((0,0,0))
+		t = f2.render("STARFURY",True,(255,255,255))
+		bf = pygame.image.load("Images/border2.png").convert_alpha()
+		bpane = pygame.Surface((45*5,40))
+		for i in range(5):
+			bpane.blit(pygame.image.load("Images/border.png").convert_alpha(),(i*45,0))
+		screen.blit(t,(430-t.get_width()/2,140-t.get_height()/2))
+		screen.blit(bf,(430-bf.get_width()/2,240-t.get_height()/2))
+		screen.blit(bpane,(430-bpane.get_width()/2,440-t.get_height()/2))
+		y = 0
+		start = 430-len(hulls)*55
+		for i in hulls:
+			print i.modified
+			try:
+				screen.blit(pygame.transform.scale(pygame.image.load("Images/"+i.img.strip()).convert_alpha(),(80,40)),(0,start+y))
+				k = 0
+				for j in i.modified:
+					screen.blit(font.render(j[0]+" "+j[1],True,(255,255,255)),(100,start+y+k))
+					k+=15
+				if k>45:
+					y+=k+15
+				else:
+					y+=55
+			except:
+				pass
+		y = 0
+		start = 430-len(comps)/2*55
+		for i in comps:
+			try:
+				screen.blit(pygame.transform.scale(pygame.image.load("Images/"+i.img.strip()).convert_alpha(),(40,40)),(860-200,start+y))
+				k = 0
+				for j in i.modified:
+					screen.blit(font.render(j[0]+" "+j[1],True,(255,255,255)),(860-150,start+y+k))
+					k+=15
+				if k>45:
+					y+=k+15
+				else:
+					y+=55
+			except:
+				pass
 		pygame.display.update()

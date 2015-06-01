@@ -152,7 +152,7 @@ class Component(object):
 			mp = False
 		
 
-comps = [[Component.load("wasp.cmp"),Component.load("iondrive.cmp"),Component.load("largetail.cmp"),Component.load("ammobox.cmp"),Component.load("autocannon.cmp")],[Component.load("osprey.cmp"),Component.load("irscanner.cmp"),Component.load("rockettubes.cmp"),Component.load("powercore.cmp"),Component.load("flakcannon.cmp"),Component.load("thrusters.cmp")],[Component.load("raptor.cmp"),Component.load("thrusters.cmp"),Component.load("largetail.cmp"),Component.load("bombclip.cmp"),Component.load("bombbay.cmp"),Component.load("cloakingdevice.cmp"),Component.load("heatsink.cmp")]]
+comps = [[Component.load("wasp.hull"),Component.load("iondrive.cmp"),Component.load("largetail.cmp"),Component.load("ammobox.cmp"),Component.load("autocannon.cmp")],[Component.load("osprey.hull"),Component.load("irscanner.cmp"),Component.load("rockettubes.cmp"),Component.load("powercore.cmp"),Component.load("flakcannon.cmp"),Component.load("thrusters.cmp")],[Component.load("raptor.hull"),Component.load("thrusters.cmp"),Component.load("largetail.cmp"),Component.load("bombclip.cmp"),Component.load("bombbay.cmp"),Component.load("cloakingdevice.cmp"),Component.load("heatsink.cmp")]]
 
 class Player(object):
 	def __init__(self,call,addr,clas,team,af):
