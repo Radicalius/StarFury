@@ -1,0 +1,14 @@
+# config file for lobby.py
+# PLEASE DO NOT NAME YOUR SERVER ZACH'S AWESOME SERVER!!!  THAT NAME IS STUPID!!!
+
+Name: Zach's Awesome Server
+Player Limit: 6
+Map: Flat
+Gamemode: Default
+Port: 8001
+IPv4: 127.0.0.1
+Global: False
+Hamachi: n/a
+Password: n/a
+Mods: StarFuryMod,MountainTerrain
+

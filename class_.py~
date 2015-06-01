@@ -957,6 +957,7 @@ class Light(object):
 				self.pix_array = pygame.surfarray.pixels3d(self.master_image)
 				c = 0
 				d = 0
+				self.master_image.set_colorkey((0,0,0))
 				for i in self.pix_array:
 					d = 0
 					for j in i:

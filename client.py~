@@ -436,7 +436,7 @@ while True:
 			lastshot = ti.time()
 		for i in lights:
 			i.render(lighting)
-		#screen.blit(lighting,(0,0))
+		screen.blit(lighting,(0,0))
 		try:
 			screen.blit(target,(mx-10,my-10))
 			screen.blit(pygame.image.load("Images/"+"bullet.png").convert_alpha(),(5,15))
