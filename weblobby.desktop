@@ -1,8 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Version=1.0
-Type=Application
-Terminal=false
-Name=Run Weblobby
-Exec=/home/zcotton/Spring/weblobby
-Icon=/home/zcotton/Spring/lib/icon.png
