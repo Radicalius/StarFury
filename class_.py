@@ -32,7 +32,7 @@ font = pygame.font.Font("font.ttf",12)
 stats = {"Ammo":0,"Speed":1,"Handling":2,"Cal":12,"RoF":3,"BS":4,"Range":5,"Amp":6,"Cooldown":7,"Duration":8,"AoE":9,"HS":10,"HB":11,"Caliber":12,"RR":13,"Slot":14}
 
 class Component(object):
-	def __init__(self,name,char,image,stats,modified):
+	def __init__(self,name,char,image,stats,modified,fname=""):
 		self.ammo = stats[0]
 		self.sstat = stats[1]
 		self.mstat = stats[2]
@@ -52,6 +52,7 @@ class Component(object):
 		self.char = char
 		self.slot = stats[14]
 		self.modified = modified
+		self.fname = fname
 	@staticmethod
 	def load(fname):
 		f = open("Components/"+fname,"r")
@@ -79,7 +80,7 @@ class Component(object):
 					mult = mult[1:]
 				mult = float(mult)
 				s[stats[stat]]+=mult
-		return Component(name,char,image,s,modified) 
+		return Component(name,char,image,s,modified,fname=fname) 
 	def add(self,i):
 		i.ammo+=self.ammo
 		i.sstat+=self.sstat
