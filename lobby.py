@@ -77,7 +77,7 @@ while True:
 			print g[1]
 		ready = True
 		for j in users:
-			sock.sendto("/player "+addrs[addr]+" "+users[addrs[addr]][1]+" "+users[addrs[addr]][2]+" "+users[addrs[addr]][3]+" "+users[addrs[addr]][4],users[j][0])
+			sock.sendto("/player "+addrs[addr]+" "+users[addrs[addr]][1]+" "+users[addrs[addr]][2]+" "+users[addrs[addr]][3]+" "+users[addrs[addr]][4]+" "+str(users[addrs[addr]][5]).replace(" ","~"),users[j][0])
 			if users[j][3] == "Prep":
 				ready = False
 		if ready == True:

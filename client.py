@@ -78,7 +78,8 @@ def read(id):
 				start = "running"
 			g = inp[0].split(" ")
 			if g[0] == "/player":
-				lobby[g[1]] = [g[2],g[3],g[4],g[5]]
+				lobby[g[1]] = [g[2],g[3],g[4],g[5],eval(g[6].replace("~"," "))]
+				print lobby[g[1]]
 				print lobby
 			if g[0] == "/start":
 				host = (inp[1][0],int(g[1]))
@@ -649,14 +650,24 @@ while True:
 					cname = font.render(i,True,(100,100,155))
 					screen.blit(cname,(50,290-cname.get_height()/2+by))
 					rdy = font.render(lobby[i][2],True,(100,100,155))
-					screen.blit(rdy,(250,290-cname.get_height()/2+by))
+					screen.blit(rdy,(300,290-cname.get_height()/2+by))
+					x = 0
+					for j in lobby[i][-1]:
+						if j!="-1":
+							screen.blit(pygame.transform.scale(pygame.image.load("Images/"+Component.load(j).img.strip()),(20,20)),(x+50+cname.get_width()+5,290-cname.get_height()/2+by+5))
+							x+=22
 					by+=50	
 				if lobby[i][1] == "2":
 					screen.blit(pygame.image.load("Images/"+hulls[int(lobby[i][3])].img.strip()).convert_alpha(),(430,290+ry)) 
 					cname = font.render(i,True,(155,100,100))
 					screen.blit(cname,(50+430,290-cname.get_height()/2+ry))
 					rdy = font.render(lobby[i][2],True,(155,100,100))
-					screen.blit(rdy,(250+430,290-cname.get_height()/2+ry))
+					screen.blit(rdy,(300+430,290-cname.get_height()/2+ry))
+					x = 0
+					for j in lobby[i][-1]:
+						if j!="-1":
+							screen.blit(pygame.transform.scale(pygame.image.load("Images/"+Component.load(j).img.strip()),(20,20)),(x+50+430+cname.get_width()+5,290-cname.get_height()/2+ry+5))
+							x+=22
 					ry+=50	
 			if selected == 0:
 				t2 = font.render("CHANGE LOADOUT",True,(155,155,255))
