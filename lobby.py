@@ -28,7 +28,7 @@ def run_game(pnum):
 		users[i][3] = "InGame"
 	for j in users:
 		for k in users:
-			sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3],users[k][0])
+			sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3]+" "+users[j][4]+" "+str(users[j][5]).replace(" ","~"),users[k][0])
 	os.system("python srv.py "+str(pnum))
 	print "in"
 	ingame = False
@@ -36,7 +36,7 @@ def run_game(pnum):
 		users[i][3] = "Prep"
 	for j in users:
 		for k in users:
-			sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3],users[k][0])
+			sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3]+" "+users[j][4]+" "+str(users[j][5]).replace(" ","~"),users[k][0])
 	global status
 	status = "Lobby"
 	update(status)	
@@ -57,7 +57,7 @@ while True:
 			users[g[1]] = [addr,"fighter","1","Prep","0",["-1"]*14]
 			addrs[addr] = g[1]
 			for j in users:
-				sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3],addr)
+				sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3]+" "+users[j][4]+" "+str(users[j][5]).replace(" ","~"),addr)
 			update("Lobby")
 		if g[0] == "/team":
 			users[addrs[addr]][2] = g[1]
@@ -69,12 +69,10 @@ while True:
 			users[addrs[addr]][4] = str(g[1])
 			users[addrs[addr]][3] = "Prep"
 		if g[0] == "/comp":
-			print g
 			users[addrs[addr]][5][int(g[1])] = str(g[2])
 			users[addrs[addr]][3] = "Prep"
 		if g[0] == "/ready" and not ingame:
 			users[addrs[addr]][3] = g[1]
-			print g[1]
 		ready = True
 		for j in users:
 			sock.sendto("/player "+addrs[addr]+" "+users[addrs[addr]][1]+" "+users[addrs[addr]][2]+" "+users[addrs[addr]][3]+" "+users[addrs[addr]][4]+" "+str(users[addrs[addr]][5]).replace(" ","~"),users[j][0])

@@ -331,18 +331,28 @@ while True:
 			ss.sendto("22 "+envars["Mods"],addr)
 			print "22 "+envars["Mods"]
 			print afs[af],af
+			comps = []
+			print g[4]
+			for i in list(eval(g[4].replace("~"," "))):
+				try:
+					comps.append(Component.load(i.strip()))
+					print i
+				except:
+					print "Components/"+i.strip()
+			hull = Component.load(g[5].strip())
+			print comps
 			if g[3] == "1":
-				players[g[1]] = Player(g[1],addr,g[2],g[3],afs[af1])
+				players[g[1]] = Player(g[1],addr,comps,"1",afs[af1],hull)
 				af1+=1
 			else:		
-				players[g[1]] = Player(g[1],addr,g[2],g[3],afs[af2])
+				players[g[1]] = Player(g[1],addr,comps,"2",afs[af2],hull)
 				af2-=1
 			for i in players.keys():
-				ss.sendto("2 "+i+" "+players[i].class_+" "+players[i].team+" "+str(players[i].airfield),addr)
-				print i
+				ss.sendto("2 "+i+" "+g[4]+" "+players[i].team+" "+str(players[i].airfield)+" "+g[5],addr)
+				print "2 "+i+" "+g[4]+" "+players[i].team+" "+str(players[i].airfield)+" "+g[5]
 			for i in players.keys():
 				if not players[i].ai:
-					ss.sendto("2 "+g[1]+" "+players[g[1]].class_+" "+players[g[1]].team+" "+str(players[g[1]].airfield),addrs[i])
+					ss.sendto("2 "+g[1]+" "+g[4]+" "+players[g[1]].team+" "+str(players[g[1]].airfield)+" "+g[5],addrs[i])
 			score.update = True
 			playerc+=1
 			if playerc == playernum:
@@ -359,25 +369,28 @@ while True:
 				ss.sendto("4 "+uaddrs[addr]+" "+g[1],addrs[i])
 	if cmd == 3:
 		if g[1] == "2":
-			if players[uaddrs[addr]].class_ == "fighter":
-				players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)+2*pow(1.25,players[uaddrs[addr]].amp)
-			if players[uaddrs[addr]].class_ == "bomber":
-				players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
-				players[uaddrs[addr]].stealth = True
-			if players[uaddrs[addr]].class_ == "interceptor":
-				players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
-				players[uaddrs[addr]].mark = True
+			players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
+			print "Speed=",players[uaddrs[addr]].speed
+			#if players[uaddrs[addr]].class_ == "fighter":
+			#	players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)+2*pow(1.25,players[uaddrs[addr]].amp)
+			#if players[uaddrs[addr]].class_ == "bomber":
+			#	players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
+			#	players[uaddrs[addr]].stealth = True
+			#if players[uaddrs[addr]].class_ == "interceptor":
+			#	players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
+			#	players[uaddrs[addr]].mark = True
 		else:
-			if players[uaddrs[addr]].class_ == "fighter":
-				players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
-			if players[uaddrs[addr]].class_ == "bomber":
-				players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
-				players[uaddrs[addr]].stealth = False
-			if players[uaddrs[addr]].class_ == "interceptor":
-				players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
-				players[uaddrs[addr]].mark = False
+			pass
+		#	if players[uaddrs[addr]].class_ == "fighter":
+		#		players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
+		#	if players[uaddrs[addr]].class_ == "bomber":
+		#		players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
+		#		players[uaddrs[addr]].stealth = False
+		#	if players[uaddrs[addr]].class_ == "interceptor":
+		#		players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
+		#		players[uaddrs[addr]].mark = False
 		for i in players.keys():
-			if not players[i].ai:
+			#if not players[i].ai:
 				ss.sendto("5 "+uaddrs[addr]+" "+g[1],addrs[i])
 	if cmd == 4:
 		players[uaddrs[addr]].gun = int(g[1])

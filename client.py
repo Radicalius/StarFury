@@ -68,10 +68,10 @@ imgs = {}
 for i in range(-3,12):
 	imgs[i] = pygame.image.load("Images/"+str(i)+".png").convert_alpha()
 
+
 def read(id):
-	global vcount,victory,start,host,mods
+	global vcount,victory,start,host,mods,comps
 	while True:
-		try:
 			inp = s.recvfrom(12000)
 			if inp[0] == "111":
 				global start
@@ -79,15 +79,19 @@ def read(id):
 			g = inp[0].split(" ")
 			if g[0] == "/player":
 				lobby[g[1]] = [g[2],g[3],g[4],g[5],eval(g[6].replace("~"," "))]
-				print lobby[g[1]]
-				print lobby
+				continue
 			if g[0] == "/start":
 				host = (inp[1][0],int(g[1]))
 				ti.sleep(1)
 				start = "waiting"
 				call = callsign
-				s.sendto("0 "+call+" "+lobby[call][0]+" "+lobby[call][1],host)
-				print "in"
+				c = []
+				for i in cmps:
+					if i!=None:
+						c.append(i.fname)
+				s.sendto("0 "+call+" "+lobby[call][0]+" "+str(lobby[call][1])+" "+str(c).replace(" ","~")+" "+hulls[inst1].fname,host)
+				print "0 "+call+" "+lobby[call][0]+" "+str(lobby[call][1])+" "+str(c).replace(" ","~")+" "+hulls[inst1].fname
+				continue
 			cmd = int(g[0])
 			if cmd == 0:
 				for i in g[1:]:
@@ -107,30 +111,46 @@ def read(id):
 						print i,sys.exc_info()
 					x+=1
 			if cmd == 2:
-				players[g[1]] = Player(g[1],None,g[2],g[3],int(g[4]))
+				#try:
+					print inp
+					comps = []
+					for i in list(eval(g[2].replace("~"," "))):
+						try:
+							comps.append(Component.load(i.strip()))
+						except:
+							print sys.exc_info()
+					hull = Component.load(g[5])
+					players[g[1]] = Player(g[1],None,comps,g[3],int(g[4]),hull)
+				#	raise SystemExit
+				#except:
+				#	print sys.exc_info()
+				#	raise SystemExit
 			if cmd == 4:
 				players[g[1]].rth = int(g[2])
 			if cmd == 5:
 				if g[2] == "2":
-					if players[g[1]].class_ == "fighter":
-						players[g[1]].speed = pow(1.25,players[g[1]].sstat)+2*pow(1.25,players[g[1]].amp)
-					if players[g[1]].class_ == "bomber":
-						players[g[1]].speed = pow(1.25,players[g[1]].sstat)
-						players[g[1]].stealth = True
-					if players[g[1]].class_ == "interceptor":
-						players[g[1]].speed = pow(1.25,players[g[1]].sstat)
-						players[g[1]].mark = True
+					players[g[1]].speed = pow(1.25,players[g[1]].sstat)
+					print "Speed=",players[g[1]].speed
+					#if players[g[1]].class_ == "fighter":
+					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)+2*pow(1.25,players[g[1]].amp)
+					#if players[g[1]].class_ == "bomber":
+					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
+					#	players[g[1]].stealth = True
+					#if players[g[1]].class_ == "interceptor":
+					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
+					#	players[g[1]].mark = True
 				else:
-					if players[g[1]].class_ == "fighter":
-						players[g[1]].speed = pow(1.25,players[g[1]].sstat)
-					if players[g[1]].class_ == "bomber":
-						players[g[1]].speed = pow(1.25,players[g[1]].sstat)
-						players[g[1]].stealth = False
-					if players[g[1]].class_ == "interceptor":
-						players[g[1]].speed = pow(1.25,players[g[1]].sstat)
-						players[g[1]].mark = False
+					pass
+					#if players[g[1]].class_ == "fighter":
+					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
+					#if players[g[1]].class_ == "bomber":
+					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
+					#	players[g[1]].stealth = False
+					#if players[g[1]].class_ == "interceptor":
+					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
+					#	players[g[1]].mark = False
 			if cmd == 6:
-				global fpos,lscrollx
+				global fpos,scrollx
 				#players[g[1]].sx = int(g[2])
 				#players[g[1]].sy = int(g[3])
 				#diff = sqrt(players[g[1]].sx*players[g[1]].sx+players[g[1]].sy*players[g[1]].sy)-sqrt(players[g[1]].x*players[g[1]].x+players[g[1]].y*players[g[1]].y)
@@ -151,7 +171,6 @@ def read(id):
 				players[g[1]].x = int(g[2])
 				players[g[1]].y = int(g[3])
 				players[g[1]].rt = int(g[4])
-				lscrollx = int(g[2])
 			if cmd == 7:
 				players[g[1]].gun = int(g[2])
 			if cmd == 8:
@@ -227,19 +246,11 @@ def read(id):
 					s1+=i+" "
 				cats.append("["+g[1]+"] "+s1)
 			if cmd == 22:
-				print "in"
 				for i in g[1].split(","):
 					mods.append(eval(i+"."+i)())
 				print mods
 			for i in mods:
 				i.clientComm(s,cmd,g,map,bmap,players,bullets,bombs,rockets,score,victor)
-		except:
-			try:
-				print sys.exc_info()
-			except:
-				pass
-
-thread.start_new(read,(1,))
 
 pygame.mouse.set_visible(False)
 
@@ -295,6 +306,7 @@ def update_list(id):
 		ti.sleep(2)
 
 thread.start_new(update_list,(1,))
+thread.start_new(read,(1,))
 inst1 = 0
 inst2 = 0
 cmps = [None]*14
@@ -477,7 +489,8 @@ while True:
 			if chat:			
 				screen.blit(font.render(text1,True,(255,255,255)),(0,640))
 		except:
-			print sys.exc_info()
+			pass
+			#print sys.exc_info()
 		if upgrade and players[call].landed:
 			#568,422
 			screen.blit(u,(430-568/2,340-422/2))
@@ -588,7 +601,6 @@ while True:
 							selected-=1
 		screen.fill((0,0,0))
 		t = f2.render("STARFURY",True,(255,255,255))
-		print servers
 		if state == 0:
 			if selected == 0:
 				t2 = font.render("CALLSIGN: "+callsign,True,(155,155,255))
@@ -728,7 +740,6 @@ while True:
 		else:
 			bf = pygame.image.load("Images/border2e.png").convert_alpha()
 		bpane = pygame.Surface((45*hulls[inst1].slot,40))
-		print hulls[inst1].slot
 		for i in range(int(hulls[inst1].slot)):
 			if selected != i+1:
 				bpane.blit(pygame.image.load("Images/border.png").convert_alpha(),(i*45,0))
@@ -778,4 +789,3 @@ while True:
 				pass
 		screen.blit(t2,(430-t2.get_width()/2,600-t2.get_height()/2))
 		pygame.display.update()
-	print start

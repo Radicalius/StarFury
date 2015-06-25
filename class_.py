@@ -156,7 +156,7 @@ class Component(object):
 comps = [[Component.load("wasp.hull"),Component.load("iondrive.cmp"),Component.load("largetail.cmp"),Component.load("ammobox.cmp"),Component.load("autocannon.cmp")],[Component.load("osprey.hull"),Component.load("irscanner.cmp"),Component.load("rockettubes.cmp"),Component.load("powercore.cmp"),Component.load("flakcannon.cmp"),Component.load("thrusters.cmp")],[Component.load("raptor.hull"),Component.load("thrusters.cmp"),Component.load("largetail.cmp"),Component.load("bombclip.cmp"),Component.load("bombbay.cmp"),Component.load("cloakingdevice.cmp"),Component.load("heatsink.cmp")]]
 
 class Player(object):
-	def __init__(self,call,addr,clas,team,af):
+	def __init__(self,call,addr,comps,team,af,hull):
 		self.ai = False
 		self.x = 0
 		self.sx = 0
@@ -176,7 +176,7 @@ class Player(object):
 		self.airfield = af
 		self.landed = False
 		self.call = call
-		self.class_ = clas
+		#self.class_ = clas
 		self.team = team
 		self.rth = 0
 		self.stealth = False
@@ -188,6 +188,8 @@ class Player(object):
 		self.bomb = 0
 		self.mx = 0
 		self.my = 0
+		self.comps = comps
+		self.hull = hull
 	#################################
 		self.ammo = 0
 		self.sstat = 0
@@ -211,34 +213,36 @@ class Player(object):
 		self.lastmissle = 0
 		self.lastshot = 0
 		self.lastbomb = 0
+		self.bombs = 0
+		self.shots = 0
+		self.rockets = 0
 		self.light = None
-		if self.class_ == "fighter":
-			self.sstat+=0.5
-			self.hb+=0.5
-			self.comps = comps[0]
-			self.shots = pow(1.25,self.ammo)*20
-			self.bombs = 0
-			self.rockets = 0
-			for i in comps[0]:
-				i.add(self)
-		if self.class_ == "interceptor":
-			self.comps = comps[1]
-			self.shots = pow(1.25,self.ammo)*10
-			self.speed = pow(1.25,self.sstat)
-			self.rockets = pow(1.25,self.ammo)*5
-			self.bombs = 0
-			for i in comps[1]:
-				i.add(self)
-		if self.class_ == "bomber":
-			self.sstat-=0.5
-			self.hb-=0.5
-			self.comps = comps[2]
-			self.shots = pow(1.25,self.ammo)*10
-			self.speed = pow(1.25,self.sstat)
-			self.bombs = pow(1.25,self.ammo)*15
-			self.rockets = 0
-			for i in comps[2]:
-				i.add(self)
+		#if self.class_ == "fighter":
+		#	self.sstat+=0.5
+		#	self.comps = comps[0]
+		#	self.shots = pow(1.25,self.ammo)*20
+		#	self.bombs = 0
+		#	self.rockets = 0
+		#	for i in comps[0]:
+		#		i.add(self)
+		#if self.class_ == "interceptor":
+		#	self.comps = comps[1]
+		#	self.shots = pow(1.25,self.ammo)*10
+		#	self.speed = pow(1.25,self.sstat)
+		#	self.rockets = pow(1.25,self.ammo)*5
+		#	self.bombs = 0
+		#	for i in comps[1]:
+		#		i.add(self)
+		#if self.class_ == "bomber":
+		#	self.sstat-=0.5
+		#	self.hb-=0.5
+		#	self.comps = comps[2]
+		#	self.shots = pow(1.25,self.ammo)*10
+		#	self.speed = pow(1.25,self.sstat)
+		#	self.bombs = pow(1.25,self.ammo)*15
+		#	self.rockets = 0
+		#	for i in comps[2]:
+		#		i.add(self)
 		self.speed = 0
 	def lock(self,a):
 		self.slock.lock()
@@ -275,7 +279,7 @@ class Player(object):
 					self.falling = False
 			if (call == self.call) and self.x<500*20-800 and self.x>0:
 				if not self.stealth:
-					fighter = pygame.image.load("Images/"+self.class_+str(self.team)+".png").convert_alpha()
+					fighter = pygame.image.load("Images/"+self.hull.img.split(".")[0]+str(self.team)+".png").convert_alpha()
 				else:
 					fighter = pygame.image.load("Images/"+"bombers.png").convert_alpha()
 				if (self.rt%360>90 and self.rt%360<270):
@@ -287,7 +291,7 @@ class Player(object):
 				self.light.render(lighting)
 			else:
 				label = font.render(self.call,True,(155,155,155))
-				fighter = pygame.image.load("Images/"+self.class_+self.team+".png").convert_alpha()
+				fighter = pygame.image.load("Images/"+self.hull.img.split(".")[0]+str(self.team)+".png").convert_alpha()
 				if (self.rt%360>90 and self.rt%360<270):
 					fighter = pygame.transform.flip(fighter,False,True)
 				f2 = pygame.transform.rotate(fighter,self.rt)
@@ -327,21 +331,21 @@ class Player(object):
 							self.rt = 0
 						self.y = 680-map[int(self.x+430)/20]*20+10
 						self.landed = True
-						if self.class_ == "fighter":
-							self.shots = pow(1.25,self.ammo)*20
-							self.bombs = 0
-							self.rockets = 0
-						if self.class_ == "interceptor":
-							self.shots = pow(1.25,self.ammo)*10
-							self.speed = pow(1.25,self.sstat)
-							self.rockets = pow(1.25,self.ammo)*5
-							self.bombs = 0
-						if self.class_ == "bomber":
-							self.shots = pow(1.25,self.ammo)*10
-							self.speed = pow(1.25,self.sstat)
-							self.bombs = pow(1.25,self.ammo)*15
-							self.rockets = 0
-							self.speed = 0
+						#if self.class_ == "fighter":
+						#	self.shots = pow(1.25,self.ammo)*20
+						#	self.bombs = 0
+						#	self.rockets = 0
+						#if self.class_ == "interceptor":
+						#	self.shots = pow(1.25,self.ammo)*10
+						#	self.speed = pow(1.25,self.sstat)
+						#	self.rockets = pow(1.25,self.ammo)*5
+						#	self.bombs = 0
+						#if self.class_ == "bomber":
+						#	self.shots = pow(1.25,self.ammo)*10
+						#	self.speed = pow(1.25,self.sstat)
+						#	self.bombs = pow(1.25,self.ammo)*15
+						#	self.rockets = 0
+						#	self.speed = 0
 			else:
 				self.landed =  False
 			if self.gun == 1 and ti.time()-self.lastshot>1/5.*pow(1.25,-self.rof) and self.shots>0:
@@ -872,7 +876,7 @@ class Explosion(object):
 		self.x = x
 		self.y = y
 		self.count = 0.1
-		self.light = Light(self.x,self.y,(255,255,255),0.3,1)
+		#self.light = Light(self.x,self.y,(255,255,255),0.3,1)
 		self.radius = rad
 		self.flip = False
 		try:
@@ -892,9 +896,10 @@ class Explosion(object):
 			else:
 				self.count-=0.4
 			if self.count>0:
-				self.light.x = self.x+430-scrollx
-				self.light.radius = int(self.count*300)
-				self.light.render(lighting)
+				pass
+				#self.light.x = self.x+430-scrollx
+				#self.light.radius = int(self.count*300)
+				#self.light.render(lighting)
 
 class Turret(object):
 	def __init__(self,x,y,team):
