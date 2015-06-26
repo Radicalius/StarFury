@@ -72,6 +72,7 @@ for i in range(-3,12):
 def read(id):
 	global vcount,victory,start,host,mods,comps
 	while True:
+		try:
 			inp = s.recvfrom(12000)
 			if inp[0] == "111":
 				global start
@@ -130,6 +131,7 @@ def read(id):
 			if cmd == 5:
 				if g[2] == "2":
 					players[g[1]].speed = pow(1.25,players[g[1]].sstat)
+					players[g[1]].actives[0][2] = True
 					print "Speed=",players[g[1]].speed
 					#if players[g[1]].class_ == "fighter":
 					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)+2*pow(1.25,players[g[1]].amp)
@@ -140,7 +142,7 @@ def read(id):
 					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
 					#	players[g[1]].mark = True
 				else:
-					pass
+					players[g[1]].actives[0][2] = False
 					#if players[g[1]].class_ == "fighter":
 					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
 					#if players[g[1]].class_ == "bomber":
@@ -251,6 +253,8 @@ def read(id):
 				print mods
 			for i in mods:
 				i.clientComm(s,cmd,g,map,bmap,players,bullets,bombs,rockets,score,victor)
+		except:
+			print sys.exc_info()
 
 pygame.mouse.set_visible(False)
 
@@ -471,7 +475,7 @@ while True:
 			screen.blit(font.render(str(int(players[call].rockets)),True,(255,255,255)),(20,60))
 			screen.blit(font.render(str(int(players[call].powdur)),True,(255,255,255)),(20,85))
 			a = font.render(str(score.s1)+" vs "+str(score.s2),True,(255,255,255))
-			b = font.render("Credits: "+str(players[call].gold),True,(255,255,255))
+			b = font.render("Credits: "+str(int(players[call].gold)),True,(255,255,255))
 			screen.blit(a,(430-a.get_width()/2,0))
 			screen.blit(b,(430+430*3/4-a.get_width()/2,0))
 			scrollx = players[call].x

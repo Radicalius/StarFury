@@ -29,10 +29,10 @@ class Lock(object):
 	
 font = pygame.font.Font("font.ttf",12)
 
-stats = {"Ammo":0,"Speed":1,"Handling":2,"Cal":12,"RoF":3,"BS":4,"Range":5,"Amp":6,"Cooldown":7,"Duration":8,"AoE":9,"HS":10,"HB":11,"Caliber":12,"RR":13,"Slot":14}
+stats = {"Ammo":0,"Speed":1,"Handling":2,"Cal":12,"RoF":3,"BS":4,"Range":5,"Amp":6,"Cooldown":7,"Duration":8,"AoE":9,"HS":10,"HB":11,"Caliber":12,"RR":13,"Slot":14,"SAP":15,"RAP":16,"BAP":17}
 
 class Component(object):
-	def __init__(self,name,char,image,stats,modified,fname=""):
+	def __init__(self,name,char,image,stats,modified,active,semiactive,passive,fname=""):
 		self.ammo = stats[0]
 		self.sstat = stats[1]
 		self.mstat = stats[2]
@@ -53,6 +53,12 @@ class Component(object):
 		self.slot = stats[14]
 		self.modified = modified
 		self.fname = fname
+		self.sap = stats[15]
+		self.rap = stats[16]
+		self.bap = stats[17]
+		self.active = active
+		self.semiactive = semiactive
+		self.passive = passive
 	@staticmethod
 	def load(fname):
 		f = open("Components/"+fname,"r")
@@ -60,8 +66,11 @@ class Component(object):
 		name = "Comp"
 		char = ""
 		image = "blank.png"
+		a = None
+		sa = None
+		p = None
 		modified = []
-		s = [0]*15
+		s = [0]*18
 		for l in cont:
 			h = l.split(" ")
 			g = l.split("=")
@@ -72,6 +81,12 @@ class Component(object):
 					char = g[1]
 				if g[0].strip() == "Image":
 					image = g[1]
+				if g[0].strip() == "Active":
+					a = g[1].strip()
+				if g[0].strip() == "SemiActive":
+					sa = g[1].strip()
+				if g[0].strip() == "Passive":
+					p = g[1].strip()
 			elif len(h)>1:
 				mult = h[0]
 				stat = h[1].strip()
@@ -80,7 +95,7 @@ class Component(object):
 					mult = mult[1:]
 				mult = float(mult)
 				s[stats[stat]]+=mult
-		return Component(name,char,image,s,modified,fname=fname) 
+		return Component(name,char,image,s,modified,a,sa,p,fname=fname) 
 	def add(self,i):
 		i.ammo+=self.ammo
 		i.sstat+=self.sstat
@@ -96,6 +111,15 @@ class Component(object):
 		i.hb+=self.hb
 		i.cal+=self.cal
 		i.rr+=self.rr
+		i.sap+=self.sap
+		i.bap+=self.bap
+		i.rap+=self.rap
+		if self.passive!=None: 
+			i.passives.append(self.passive)
+		if self.semiactive!=None:
+			i.actives.append([self.semiactive,"semi",False])
+		if self.active!=None:
+			i.actives.append([self.active,"full",False])
 	def upgrade(self,i):
 		i.ammo-=self.ammo
 		i.sstat-=self.sstat
@@ -205,6 +229,9 @@ class Player(object):
 		self.hb = 0
 		self.cal = 0
 		self.rr = 0
+		self.rap = 0
+		self.bap = 0
+		self.sap = 0
 	#################################
 		self.dtime = ti.time()-20
 		self.powmax = 250*pow(1.25,self.powstat)
@@ -217,6 +244,9 @@ class Player(object):
 		self.shots = 0
 		self.rockets = 0
 		self.light = None
+		self.actives = []
+		self.semiactives = []
+		self.passives = []
 		#if self.class_ == "fighter":
 		#	self.sstat+=0.5
 		#	self.comps = comps[0]
@@ -243,6 +273,17 @@ class Player(object):
 		#	self.rockets = 0
 		#	for i in comps[2]:
 		#		i.add(self)
+		for i in self.comps:
+			i.add(self)
+		total = self.sap+self.bap+self.rap
+		if total!=0:
+			self.shots = pow(1.25,self.ammo)*20*(self.sap/total)
+			self.bombs = pow(1.25,self.ammo)*20*(self.bap/total)
+			self.rockets = pow(1.25,self.ammo)*20*(self.rap/total)
+		else:
+			self.shots = 0
+			self.bombs = 0
+			self.rockets = 0
 		self.speed = 0
 	def lock(self,a):
 		self.slock.lock()
@@ -331,6 +372,15 @@ class Player(object):
 							self.rt = 0
 						self.y = 680-map[int(self.x+430)/20]*20+10
 						self.landed = True
+						total = self.sap+self.bap+self.rap
+						if total!=0:
+							self.shots = pow(1.25,self.ammo)*20*(self.sap/total)
+							self.bombs = pow(1.25,self.ammo)*20*(self.bap/total)
+							self.rockets = pow(1.25,self.ammo)*20*(self.rap/total)
+						else:
+							self.shots = 0
+							self.bombs = 0
+							self.rockets = 0
 						#if self.class_ == "fighter":
 						#	self.shots = pow(1.25,self.ammo)*20
 						#	self.bombs = 0
@@ -345,16 +395,26 @@ class Player(object):
 						#	self.speed = pow(1.25,self.sstat)
 						#	self.bombs = pow(1.25,self.ammo)*15
 						#	self.rockets = 0
-						#	self.speed = 0
+							self.speed = 0
 			else:
 				self.landed =  False
+			for i in self.passives:
+				if i == "Coin":
+					self.gold+=0.01
+			for i in self.actives:
+				if i[0] == "Thrust":	
+					if i[2]:
+						self.speed = pow(1.25,self.sstat)*2
+					else:
+						self.speed = pow(1.25,self.sstat)
+				
 			if self.gun == 1 and ti.time()-self.lastshot>1/5.*pow(1.25,-self.rof) and self.shots>0:
 				self.lastshot = ti.time()
 				self.shots-=1
-				if self.class_ != "bomber":
-					bullets.append(Bullet(self.x+cos(self.rt*pi/180)*15,self.y-sin(self.rt*pi/180)*15,self.rt,self))
-				else:
-					bullets.append(Bullet(self.x+cos(self.rt*pi/180)*-15,self.y-sin(self.rt*pi/180)*-15,180+self.rt,self))
+				#if self.class_ != "bomber":
+				bullets.append(Bullet(self.x+cos(self.rt*pi/180)*15,self.y-sin(self.rt*pi/180)*15,self.rt,self))
+				#else:
+				#	bullets.append(Bullet(self.x+cos(self.rt*pi/180)*-15,self.y-sin(self.rt*pi/180)*-15,180+self.rt,self))
 			if self.bomb == 1 and ti.time()-self.lastbomb>1/5.*pow(1.25,-self.rof) and self.bombs>0:
 				self.lastbomb = ti.time()
 				self.bombs-=1
@@ -487,30 +547,48 @@ class Player(object):
 							self.rt = 180
 						self.y = 680-map[int(self.x+430)/20]*20+10
 						self.landed = True
-						if self.class_ == "fighter":
-							self.shots = pow(1.25,self.ammo)*20
+						total = self.sap+self.bap+self.rap
+						if total!=0:
+							self.shots = pow(1.25,self.ammo)*20*(self.sap/total)
+							self.bombs = pow(1.25,self.ammo)*20*(self.bap/total)
+							self.rockets = pow(1.25,self.ammo)*20*(self.rap/total)
+						else:
+							self.shots = 0
 							self.bombs = 0
 							self.rockets = 0
-						if self.class_ == "interceptor":
-							self.shots = pow(1.25,self.ammo)*10
-							self.speed = pow(1.25,self.sstat)
-							self.rockets = pow(1.25,self.ammo)*5
-							self.bombs = 0
-						if self.class_ == "bomber":
-							self.shots = pow(1.25,self.ammo)*10
-							self.speed = pow(1.25,self.sstat)
-							self.bombs = pow(1.25,self.ammo)*15
-							self.rockets = 0
+						#if self.class_ == "fighter":
+						#	self.shots = pow(1.25,self.ammo)*20
+						#	self.bombs = 0
+						#	self.rockets = 0
+						#if self.class_ == "interceptor":
+						#	self.shots = pow(1.25,self.ammo)*10
+						#	self.speed = pow(1.25,self.sstat)
+						#	self.rockets = pow(1.25,self.ammo)*5
+						#	self.bombs = 0
+						#if self.class_ == "bomber":
+						#	self.shots = pow(1.25,self.ammo)*10
+						#	self.speed = pow(1.25,self.sstat)
+						#	self.bombs = pow(1.25,self.ammo)*15
+						#	self.rockets = 0
 						self.speed = 0
 			else:
 				self.landed =  False
+			for i in self.passives:
+				if i == "Coin":
+					self.gold+=0.1
+			for i in self.actives:
+				if i[0] == "Thrust":	
+					if i[2]:
+						self.speed = pow(1.25,self.sstat)*2
+					else:
+						self.speed = pow(1.25,self.sstat)
 			if self.gun == 1 and ti.time()-self.lastshot>1/5.*pow(1.25,self.cooldown) and self.shots>0:
 				self.lastshot = ti.time()
 				self.shots-=1
-				if self.class_ != "bomber":
-					bullets.append(Bullet(self.x+cos(self.rt*pi/180)*15,self.y-sin(self.rt*pi/180)*15,self.rt,self))
-				else:
-					bullets.append(Bullet(self.x+cos(self.rt*pi/180)*-15,self.y-sin(self.rt*pi/180)*-15,180+self.rt,self))
+				#if self.class_ != "bomber":
+				bullets.append(Bullet(self.x+cos(self.rt*pi/180)*15,self.y-sin(self.rt*pi/180)*15,self.rt,self))
+				#else:
+				#bullets.append(Bullet(self.x+cos(self.rt*pi/180)*-15,self.y-sin(self.rt*pi/180)*-15,180+self.rt,self))
 			if self.bomb == 1 and ti.time()-self.lastbomb>1/5.*pow(1.25,self.cooldown) and self.bombs>0:
 				self.lastbomb = ti.time()
 				self.bombs-=1

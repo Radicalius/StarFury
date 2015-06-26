@@ -1,5 +1,6 @@
 Name=Bomb Bay
 Char=<
-Image=explosion.png
+Image=5.png
 +1.5 Ammo
 -0.5 RoF
++1 BAP

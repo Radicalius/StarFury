@@ -370,7 +370,7 @@ while True:
 	if cmd == 3:
 		if g[1] == "2":
 			players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
-			print "Speed=",players[uaddrs[addr]].speed
+			players[uaddrs[addr]].actives[0][2] = True
 			#if players[uaddrs[addr]].class_ == "fighter":
 			#	players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)+2*pow(1.25,players[uaddrs[addr]].amp)
 			#if players[uaddrs[addr]].class_ == "bomber":
@@ -380,7 +380,7 @@ while True:
 			#	players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
 			#	players[uaddrs[addr]].mark = True
 		else:
-			pass
+			players[uaddrs[addr]].actives[0][2] = False
 		#	if players[uaddrs[addr]].class_ == "fighter":
 		#		players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
 		#	if players[uaddrs[addr]].class_ == "bomber":

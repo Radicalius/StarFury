@@ -1,6 +1,7 @@
 Name=Afterburner
 Char=<
-Image=explosion.png
+Image=11.png
+SemiActive=Thrust
 +0.5 Amp
 -0.5 Duration
 

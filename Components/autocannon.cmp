@@ -1,6 +1,8 @@
 Name=Autocannon
 Char=<
-Image=explosion.png
+Image=target.png
+Passive=Coin
 +1 Caliber
 +1 BS
 -1 RoF
++1 SAP
