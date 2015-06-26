@@ -370,7 +370,6 @@ while True:
 	if cmd == 3:
 		if g[1] == "2":
 			players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
-			players[uaddrs[addr]].actives[0][2] = True
 			#if players[uaddrs[addr]].class_ == "fighter":
 			#	players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)+2*pow(1.25,players[uaddrs[addr]].amp)
 			#if players[uaddrs[addr]].class_ == "bomber":
@@ -380,7 +379,7 @@ while True:
 			#	players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
 			#	players[uaddrs[addr]].mark = True
 		else:
-			players[uaddrs[addr]].actives[0][2] = False
+			pass
 		#	if players[uaddrs[addr]].class_ == "fighter":
 		#		players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
 		#	if players[uaddrs[addr]].class_ == "bomber":
@@ -389,9 +388,14 @@ while True:
 		#	if players[uaddrs[addr]].class_ == "interceptor":
 		#		players[uaddrs[addr]].speed = pow(1.25,players[uaddrs[addr]].sstat)
 		#		players[uaddrs[addr]].mark = False
+		for i in range(min(4,len(players[uaddrs[addr]].actives))):
+			if g[2+i] == "2":
+				players[uaddrs[addr]].actives[i][2] = True
+			else:
+				players[uaddrs[addr]].actives[i][2] = False
 		for i in players.keys():
 			#if not players[i].ai:
-				ss.sendto("5 "+uaddrs[addr]+" "+g[1],addrs[i])
+				ss.sendto("5 "+uaddrs[addr]+" "+g[1]+" "+g[2]+" "+g[3]+" "+g[4]+" "+g[5],addrs[i])
 	if cmd == 4:
 		players[uaddrs[addr]].gun = int(g[1])
 		for i in players.keys():

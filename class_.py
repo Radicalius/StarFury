@@ -234,7 +234,7 @@ class Player(object):
 		self.sap = 0
 	#################################
 		self.dtime = ti.time()-20
-		self.powmax = 250*pow(1.25,self.powstat)
+		self.powmax = 250.*pow(1.25,self.powstat)
 		self.powdur = self.powmax
 		self.rocket = 0
 		self.lastmissle = 0
@@ -402,11 +402,16 @@ class Player(object):
 				if i == "Coin":
 					self.gold+=0.01
 			for i in self.actives:
-				if i[0] == "Thrust":	
-					if i[2]:
-						self.speed = pow(1.25,self.sstat)*2
-					else:
-						self.speed = pow(1.25,self.sstat)
+				if self.powdur>0:
+					if i[0] == "Thrust":	
+						if i[2]:
+							self.speed = pow(1.25,self.sstat)*2
+						if not i[2] and self.speed == pow(1.25,self.sstat)*2:
+							self.speed = pow(1.25,self.sstat)
+					if i[0] == "Blink" and i[2] and self.powdur>=250:
+						self.x+=cos(self.rt*pi/180)*self.speed*400
+						self.y-=sin(self.rt*pi/180)*self.speed*400
+						self.powdur-=250				
 				
 			if self.gun == 1 and ti.time()-self.lastshot>1/5.*pow(1.25,-self.rof) and self.shots>0:
 				self.lastshot = ti.time()
@@ -577,11 +582,17 @@ class Player(object):
 				if i == "Coin":
 					self.gold+=0.1
 			for i in self.actives:
-				if i[0] == "Thrust":	
-					if i[2]:
-						self.speed = pow(1.25,self.sstat)*2
-					else:
-						self.speed = pow(1.25,self.sstat)
+				if self.powdur>0:
+					if i[0] == "Thrust":	
+						if i[2]:
+							self.speed = pow(1.25,self.sstat)*2
+						if not i[2] and self.speed == pow(1.25,self.sstat)*2:
+							self.speed = pow(1.25,self.sstat)
+					if i[0] == "Blink" and i[2] and self.powdur>=250:
+						self.x+=cos(self.rt*pi/180)*self.speed*400
+						self.y-=sin(self.rt*pi/180)*self.speed*400
+						self.powdur-=250			
+				
 			if self.gun == 1 and ti.time()-self.lastshot>1/5.*pow(1.25,self.cooldown) and self.shots>0:
 				self.lastshot = ti.time()
 				self.shots-=1

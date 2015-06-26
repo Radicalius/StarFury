@@ -131,8 +131,8 @@ def read(id):
 			if cmd == 5:
 				if g[2] == "2":
 					players[g[1]].speed = pow(1.25,players[g[1]].sstat)
-					players[g[1]].actives[0][2] = True
-					print "Speed=",players[g[1]].speed
+					#players[g[1]].actives[0][2] = True
+					#print "Speed=",players[g[1]].speed
 					#if players[g[1]].class_ == "fighter":
 					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)+2*pow(1.25,players[g[1]].amp)
 					#if players[g[1]].class_ == "bomber":
@@ -142,7 +142,8 @@ def read(id):
 					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
 					#	players[g[1]].mark = True
 				else:
-					players[g[1]].actives[0][2] = False
+					pass
+					#players[g[1]].actives[0][2] = False
 					#if players[g[1]].class_ == "fighter":
 					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
 					#if players[g[1]].class_ == "bomber":
@@ -151,6 +152,11 @@ def read(id):
 					#if players[g[1]].class_ == "interceptor":
 					#	players[g[1]].speed = pow(1.25,players[g[1]].sstat)
 					#	players[g[1]].mark = False
+				for i in range(min(4,len(players[g[1]].actives))):
+					if g[3+i] == "2":
+						players[g[1]].actives[i][2] = True
+					else:
+						players[g[1]].actives[i][2] = False
 			if cmd == 6:
 				global fpos,scrollx
 				#players[g[1]].sx = int(g[2])
@@ -315,6 +321,9 @@ inst1 = 0
 inst2 = 0
 cmps = [None]*14
 
+s3 = [3,0,0,0,0,0]
+kc = False
+
 while True:
 	if start == "running":
 		if playing!="game":
@@ -337,7 +346,20 @@ while True:
 					if event.key == pygame.K_RIGHT:
 						s.sendto("2 -1",host)
 					if event.key == pygame.K_UP:
-						s.sendto("3 2",host)
+						s3[1] = 2
+						kc=True
+					if event.key == pygame.K_q:
+						s3[2] = 2
+						kc=True
+					if event.key == pygame.K_w:
+						s3[3] = 2
+						kc=True
+					if event.key == pygame.K_e:
+						s3[4] = 2
+						kc=True
+					if event.key == pygame.K_r:
+						s3[5] = 2
+						kc=True
 					if event.key == pygame.K_RETURN:
 						s.sendto("4 1",host)
 					if event.key == pygame.K_DOWN:
@@ -346,6 +368,12 @@ while True:
 						s.sendto("6 1",host)
 					if event.key == pygame.K_TAB:
 						upgrade = True
+					if kc:
+						t = ""
+						for i in s3:
+							t+=str(i)+" "
+						s.sendto(t.strip(),host)
+						kc = False
 				else:
 					if event.key == pygame.K_RETURN:
 						chat = False
@@ -365,7 +393,20 @@ while True:
 				if event.key == pygame.K_LEFT:
 					s.sendto("2 0",host)
 				if event.key == pygame.K_UP:
-					s.sendto("3 0",host)
+						s3[1] = 0
+						kc=True
+				if event.key == pygame.K_q:
+						s3[2] = 0
+						kc=True
+				if event.key == pygame.K_w:
+						s3[3] = 0
+						kc=True
+				if event.key == pygame.K_e:
+						s3[4] = 0
+						kc=True
+				if event.key == pygame.K_r:
+						s3[5] = 0
+						kc=True
 				if event.key == pygame.K_RETURN:
 					s.sendto("4 0",host)
 				if event.key == pygame.K_DOWN:
@@ -374,6 +415,12 @@ while True:
 					s.sendto("6 0",host)
 				if event.key == pygame.K_TAB:
 					upgrade = False
+				if kc:
+					t = ""
+					for i in s3:
+						t+=str(i)+" "
+					s.sendto(t.strip(),host)
+					kc = False
 			if event.type == pygame.MOUSEMOTION:
 				s.sendto("7 "+str(int(mx+scrollx))+" "+str(int(my)),host)		
 			if event.type == MOUSEBUTTONDOWN:

@@ -1,0 +1,7 @@
+Name=Blink
+Char=<
+Image=4.png
+Active=Blink
++1.5 Amp
+-0.5 Duration
+
