@@ -337,6 +337,20 @@ while True:
 				i.eventHandle(event,s,map,bmap,players,bullets,bombs,rockets,score,victor)
 			if event.type == pygame.QUIT:
 				raise SystemExit
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 3:
+					s.sendto("4 1",host)
+				if event.button == 2:
+					s.sendto("6 1",host)
+				if event.button == 1:
+					s.sendto("5 1",host)
+			if event.type == pygame.MOUSEBUTTONUP:
+				if event.button == 3:
+					s.sendto("4 0",host)
+				if event.button == 2:
+					s.sendto("6 0",host)
+				if event.button == 1:
+					s.sendto("5 0",host)
 			if event.type == pygame.KEYDOWN:
 				if not chat:
 					if event.key == K_ESCAPE:
@@ -422,7 +436,7 @@ while True:
 					s.sendto(t.strip(),host)
 					kc = False
 			if event.type == pygame.MOUSEMOTION:
-				s.sendto("7 "+str(int(mx+scrollx))+" "+str(int(my)),host)		
+				s.sendto("7 "+str(int(mx))+" "+str(int(my)),host)		
 			if event.type == MOUSEBUTTONDOWN:
 				mp = True
 				if upgrade:

@@ -296,7 +296,7 @@ class Player(object):
 			if self.stealth or self.mark or self.speed>pow(1.25,self.sstat):
 				self.powdur-=1
 			else:
-				if self.powdur<250*pow(1.25,self.powstat):
+				if self.powdur<250.*pow(1.25,self.powstat):
 					self.powdur+=0.5*pow(1.25,self.cooldown)
 			if self.powdur<=0:
 				self.stealth = False
@@ -305,8 +305,24 @@ class Player(object):
 			if self.y<0 and not self.falling:
 				self.falling = True
 				self.ftime = 0
+			if self.x<0:
+				rtw = -atan2(self.y-(self.my),-(self.mx-(430+self.x)))*180./pi+180
+			elif self.x>500*20-800:
+				print "IN"
+				rtw = -atan2(self.y-(self.my),-(self.mx-430-(500*20-self.x)))*180./pi+180
+			else:
+				rtw = -atan2(self.y-(self.my),-(self.mx-430))*180./pi+180
+			rts = atan2(cos(self.rt*pi/180),-sin(self.rt*pi/180))*180./pi
+			if (rtw-rts+90)%360 == 0:
+				self.rth = 0
+			elif (rtw-rts+90)%360<180:
+				self.rth = 1
+			else:
+				self.rth = -1
+			print self.mx,self.my
 			if not self.falling:
 				self.rt+=self.rth*pow(1.25,self.mstat)*2
+				#self.rt = -atan2((self.my)-340,self.mx-430)*180./pi
 				self.x+=cos(self.rt*pi/180)*self.speed*2
 				self.y-=sin(self.rt*pi/180)*self.speed*2
 			else:
@@ -515,6 +531,19 @@ class Player(object):
 			if self.y<0 and not self.falling:
 				self.falling = True
 				self.ftime = 0
+			if self.x<0:
+				rtw = -atan2(self.y-(self.my),-(self.mx-(430+self.x)))*180./pi+180
+			elif self.x>500*20-800:
+				rtw = -atan2(self.y-(self.my),430+500*20-self.x)*180./pi+180
+			else:
+				rtw = -atan2(self.y-(self.my),-(self.mx-430))*180./pi+180
+			rts = atan2(cos(self.rt*pi/180),-sin(self.rt*pi/180))*180./pi
+			if (rtw-rts+90)%360 == 0:
+				self.rth = 0
+			elif (rtw-rts+90)%360<180:
+				self.rth = 1
+			else:
+				self.rth = -1
 			if not self.falling:
 				self.rt+=self.rth*pow(1.25,self.mstat)
 				self.x+=cos(self.rt*pi/180)*self.speed
