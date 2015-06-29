@@ -323,6 +323,7 @@ cmps = [None]*14
 
 s3 = [3,0,0,0,0,0]
 kc = False
+shx = 0
 
 while True:
 	if start == "running":
@@ -356,9 +357,11 @@ while True:
 					if event.key == K_ESCAPE:
 						raise SystemExit
 					if event.key == pygame.K_LEFT:
-						s.sendto("2 1",host)
+						#s.sendto("2 1",host)
+						shx = -1
 					if event.key == pygame.K_RIGHT:
-						s.sendto("2 -1",host)
+						#s.sendto("2 -1",host)
+						shx = 1
 					if event.key == pygame.K_UP:
 						s3[1] = 2
 						kc=True
@@ -403,9 +406,11 @@ while True:
 					chat = True
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_RIGHT:
-					s.sendto("2 0",host)
+					#s.sendto("2 0",host)
+					shx = 0
 				if event.key == pygame.K_LEFT:
-					s.sendto("2 0",host)
+					#s.sendto("2 0",host)
+					shx = 0
 				if event.key == pygame.K_UP:
 						s3[1] = 0
 						kc=True
@@ -466,6 +471,8 @@ while True:
 		screen.fill((0,0,0))
 		screen.blit(bg,(0,0))
 		lighting.fill((0,0,0))
+		if players[call].alive == False:
+			scrollx+=shx*5
 		for i in bullets:
 			i.render(screen,scrollx,map,bmap)
 		for i in bombs:
@@ -539,11 +546,12 @@ while True:
 			b = font.render("Credits: "+str(int(players[call].gold)),True,(255,255,255))
 			screen.blit(a,(430-a.get_width()/2,0))
 			screen.blit(b,(430+430*3/4-a.get_width()/2,0))
-			scrollx = players[call].x
-			if scrollx>500*20-800:
-				scrollx = 500*20-800
-			if scrollx<0:
-				scrollx = 0
+			if players[call].alive:
+				scrollx = players[call].x
+				if scrollx>500*20-800:
+					scrollx = 500*20-800
+				if scrollx<0:
+					scrollx = 0
 			players[call].mx = mx
 			players[call].my = my
 			for i in range(1,5):

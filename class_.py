@@ -502,7 +502,7 @@ class Player(object):
 				else:
 					score.s2-=25
 				self.expd = True
-			if ti.time()-self.dtime>10*pow(1.25,-self.rr) and self.airfield!=-1:
+			if ti.time()-self.dtime>10*pow(1.25,-self.rr) and self.airfield!=-1 and bmap[self.airfield]!=-1:
 				#self.x = self.airfield*20+810
 				#self.y = 680-map[self.airfield]*20+10
 				self.expd = False
@@ -684,7 +684,7 @@ class Player(object):
 					score.s2-=25
 				score.update = True
 				self.expd = True
-			if ti.time()-self.dtime>10*pow(1.25,-self.rr):
+			if ti.time()-self.dtime>10*pow(1.25,-self.rr) and bmap[self.airfield]!=-1:
 				if self.team == "1":
 					if len(players)<3:
 						self.x = self.airfield*20-420
