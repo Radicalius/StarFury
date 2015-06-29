@@ -77,6 +77,7 @@ class Component(object):
 			if len(g)>1:
 				if g[0].strip() == "Name":
 					name = g[1]
+					modified.append([name.strip(),""])
 				if g[0].strip() == "Char":
 					char = g[1]
 				if g[0].strip() == "Image":
@@ -95,6 +96,12 @@ class Component(object):
 					mult = mult[1:]
 				mult = float(mult)
 				s[stats[stat]]+=mult
+		if p!=None: 
+			modified.append(["Passive:",p])
+		if sa!=None:
+			modified.append(["SemiActive:",sa])
+		if a!=None:
+			modified.append(["Active:",a])
 		return Component(name,char,image,s,modified,a,sa,p,fname=fname) 
 	def add(self,i):
 		i.ammo+=self.ammo
@@ -424,6 +431,16 @@ class Player(object):
 							self.speed = pow(1.25,self.sstat)*2
 						if not i[2] and self.speed == pow(1.25,self.sstat)*2:
 							self.speed = pow(1.25,self.sstat)
+					if i[0] == "Stealth":
+						if i[2]:
+							self.stealth = True
+						if not i[2]:
+							self.stealth = False
+					if i[0] == "Mark":
+						if i[2]:
+							self.mark = True
+						if not i[2]:
+							self.mark = False
 					if i[0] == "Blink" and i[2] and self.powdur>=250:
 						self.x+=cos(self.rt*pi/180)*self.speed*400
 						self.y-=sin(self.rt*pi/180)*self.speed*400

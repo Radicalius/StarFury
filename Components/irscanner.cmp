@@ -1,5 +1,6 @@
 Name=IRScanner
 Char=<
 Image=explosion.png
+SemiActive=Mark
 +0.5 Amp
 -0.5 Cooldown

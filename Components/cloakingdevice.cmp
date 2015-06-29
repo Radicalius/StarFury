@@ -1,5 +1,6 @@
 Name=Cloaking Device
 Char=<
-Image=explosion.png
+Image=1.png
+SemiActive=Stealth
 +0.5 Duration
 -0.5 Amp

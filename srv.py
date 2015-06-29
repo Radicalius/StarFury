@@ -226,7 +226,7 @@ def update(id):
 	count+=1
 	if shot:
 		lastshot = ti.time()
-	if score.s1>=10000 or score.s2<=-10000 or bmap[-10] == -1:
+	if score.s1>=10000 or score.s2<=-10000 or bmap[-11] == -1:
 		victor = 0
 	if score.s2>=10000 or score.s1<=-10000 or bmap[10] == -1:
 		victor = 1

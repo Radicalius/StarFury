@@ -1,4 +1,4 @@
-import socket,os,thread
+import socket,os,thread,sys
 from socket import *
 from urllib import urlopen as get
 
@@ -29,7 +29,10 @@ def run_game(pnum):
 	for j in users:
 		for k in users:
 			sock.sendto("/player "+j+" "+users[j][1]+" "+users[j][2]+" "+users[j][3]+" "+users[j][4]+" "+str(users[j][5]).replace(" ","~"),users[k][0])
-	os.system("python srv.py "+str(pnum))
+	if sys.platform[0] == "w":
+		os.system("Python27\python.exe srv.py "+str(pnum))
+	else:
+		os.system("python srv.py "+str(pnum))
 	print "in"
 	ingame = False
 	for i in users.keys():
