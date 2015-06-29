@@ -309,7 +309,7 @@ class Player(object):
 				rtw = -atan2(self.y-(self.my),-(self.mx-(430+self.x)))*180./pi+180
 			elif self.x>500*20-800:
 				print "IN"
-				rtw = -atan2(self.y-(self.my),-(self.mx-430-(500*20-self.x)))*180./pi+180
+				rtw = -atan2(self.y-(self.my),-(self.mx-(430+self.x-scrollx)))*180./pi+180
 			else:
 				rtw = -atan2(self.y-(self.my),-(self.mx-430))*180./pi+180
 			rts = atan2(cos(self.rt*pi/180),-sin(self.rt*pi/180))*180./pi
@@ -534,7 +534,7 @@ class Player(object):
 			if self.x<0:
 				rtw = -atan2(self.y-(self.my),-(self.mx-(430+self.x)))*180./pi+180
 			elif self.x>500*20-800:
-				rtw = -atan2(self.y-(self.my),430+500*20-self.x)*180./pi+180
+				rtw = -atan2(self.y-(self.my),-(self.mx-(430+self.x-(500*20-800))))*180./pi+180
 			else:
 				rtw = -atan2(self.y-(self.my),-(self.mx-430))*180./pi+180
 			rts = atan2(cos(self.rt*pi/180),-sin(self.rt*pi/180))*180./pi
