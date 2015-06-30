@@ -184,8 +184,9 @@ for i in range(bots):
 		te = 1
 	playerc+=1
 
+exit = False
 def update(id):
-	global count,lastshot,bmap,victor
+	global count,lastshot,bmap,victor,exit
 	for i in mods:
 		i.serverUpdate(map,bmap,players,bullets,bombs,rockets,score,victor)
 	for i in players.keys():
@@ -237,7 +238,7 @@ def update(id):
 					ss.sendto("17 1",players[i].addr)
 				else:
 					ss.sendto("17 0",players[i].addr)
-		sys.exit(0)
+		exit = True
 	if victor==1:
 		for i in players.keys():
 			if not players[i].ai:
@@ -245,7 +246,7 @@ def update(id):
 					ss.sendto("17 1",players[i].addr)
 				else:
 					ss.sendto("17 0",players[i].addr)
-		sys.exit(0)
+		exit = True
 	if random.randint(1,500) == 1 and bnum<200:
 		while True:
 			index = random.randint(0,500)
@@ -317,6 +318,8 @@ af = 0
 af1 = 0
 af2 = -1
 while True:
+	if exit:
+		sys.exit(0)
 	inp = ss.recvfrom(4048)
 	g = inp[0].split(" ")
 	addr = inp[1]

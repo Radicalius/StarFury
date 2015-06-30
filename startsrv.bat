@@ -1,1 +1,1 @@
-Python27\python.exe lobby.py
+Python27\pythonw.exe lobby.py

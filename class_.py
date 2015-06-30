@@ -442,8 +442,8 @@ class Player(object):
 						if not i[2]:
 							self.mark = False
 					if i[0] == "Blink" and i[2] and self.powdur>=250:
-						self.x+=cos(self.rt*pi/180)*self.speed*400
-						self.y-=sin(self.rt*pi/180)*self.speed*400
+						self.x+=cos(self.rt*pi/180)*self.speed*400*pow(1.25,self.amp)
+						self.y-=sin(self.rt*pi/180)*self.speed*400*pow(1.25,self.amp)
 						self.powdur-=250				
 				
 			if self.gun == 1 and ti.time()-self.lastshot>1/5.*pow(1.25,-self.rof) and self.shots>0:

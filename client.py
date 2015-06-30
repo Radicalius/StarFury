@@ -114,14 +114,14 @@ def read(id):
 			if cmd == 2:
 				#try:
 					print inp
-					comps = []
+					comps_ = []
 					for i in list(eval(g[2].replace("~"," "))):
 						try:
-							comps.append(Component.load(i.strip()))
+							comps_.append(Component.load(i.strip()))
 						except:
 							print sys.exc_info()
 					hull = Component.load(g[5])
-					players[g[1]] = Player(g[1],None,comps,g[3],int(g[4]),hull)
+					players[g[1]] = Player(g[1],None,comps_,g[3],int(g[4]),hull)
 				#	raise SystemExit
 				#except:
 				#	print sys.exc_info()
@@ -338,7 +338,7 @@ while True:
 				i.eventHandle(event,s,map,bmap,players,bullets,bombs,rockets,score,victor)
 			if event.type == pygame.QUIT:
 				raise SystemExit
-			if event.type == pygame.MOUSEBUTTONDOWN:
+			if event.type == pygame.MOUSEBUTTONDOWN and not upgrade:
 				if event.button == 3:
 					s.sendto("4 1",host)
 				if event.button == 2:
@@ -577,6 +577,17 @@ while True:
 				global start
 				start = "lobby"
 				host = ("localhost",8001)
+				victory = None
+				map = []	
+				bmap = []
+				exp = []
+				bombs = []
+				bullets = []
+				rockets = []
+				turrets = []
+				shields = []
+				players = {}
+				vcount = 0
 		pygame.display.update()
 		count+=1
 	elif start == "waiting":
@@ -825,7 +836,10 @@ while True:
 		else:
 			t2 = font.render("DONE",True,(255,255,255))
 		if selected>0:
-			cmps[selected-1] = comps[inst2]
+			try:
+				cmps[selected-1] = comps[inst2]
+			except:
+				pass
 		screen.blit(t,(430-t.get_width()/2,140-t.get_height()/2))
 		screen.blit(bf,(430-bf.get_width()/2,240-t.get_height()/2))
 		screen.blit(bpane,(430-bpane.get_width()/2,440-t.get_height()/2))
