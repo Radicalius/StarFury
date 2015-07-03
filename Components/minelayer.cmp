@@ -1,0 +1,6 @@
+Name=Minelayer
+Char=<
+Image=mine.png
+Active=Mine
++1 Duration
+-1 RoF

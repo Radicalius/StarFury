@@ -325,6 +325,8 @@ s3 = [3,0,0,0,0,0]
 kc = False
 shx = 0
 
+mines = []
+
 while True:
 	if start == "running":
 		if playing!="game":
@@ -490,8 +492,10 @@ while True:
 		for i in turrets:
 			i.render(players,exp,scrollx,screen,bullets)
 		j = 0
+		for i in mines:
+			i.render(screen,scrollx,players,call)
 		for i in players.keys():
-			players[i].render(screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score,lighting,mods)
+			players[i].render(screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score,lighting,mods,mines)
 			x = 0
 			if i == call and upgrade and players[i].landed:
 				for h in players[i].comps:

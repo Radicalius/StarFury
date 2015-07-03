@@ -246,6 +246,7 @@ class Player(object):
 		self.rocket = 0
 		self.lastmissle = 0
 		self.lastshot = 0
+		self.lastmine = 0
 		self.lastbomb = 0
 		self.bombs = 0
 		self.shots = 0
@@ -295,7 +296,7 @@ class Player(object):
 	def lock(self,a):
 		self.slock.lock()
 		print self.slock.lock
-	def render(self,screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score,lighting,mods):
+	def render(self,screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score,lighting,mods,mines):
 		global score1,score2
 		if self.light == None:
 			self.light = Light(0,0,(0,0,255),0.3,100)
@@ -444,7 +445,11 @@ class Player(object):
 					if i[0] == "Blink" and i[2] and self.powdur>=250:
 						self.x+=cos(self.rt*pi/180)*self.speed*400*pow(1.25,self.amp)
 						self.y-=sin(self.rt*pi/180)*self.speed*400*pow(1.25,self.amp)
-						self.powdur-=250				
+						self.powdur-=250
+					if i[0] == "Mine" and i[2] and self.powdur>=250 and ti.time()-self.lastshot>2.*pow(1.25,-self.rof):
+						mines.append(Mine(self.x,self.y,self))
+						self.powdur-=250	
+						self.lastmine = ti.time()			
 				
 			if self.gun == 1 and ti.time()-self.lastshot>1/5.*pow(1.25,-self.rof) and self.shots>0:
 				self.lastshot = ti.time()
@@ -461,6 +466,22 @@ class Player(object):
 				self.lastmissle = ti.time()
 				self.rockets-=1
 				rockets.append(Rocket(self.x+cos(self.rt*pi/180)*15,self.y-sin(self.rt*pi/180)*15,self.rt,self,self))
+			for i in mines:
+				if (sqrt(pow(self.x-i.x,2)+pow(self.y-i.y,2)<100*pow(1.25,self.hb)+5*pow(1.25,i.hb))) and i.timer<=0 and i.alive:
+					i.alive = False
+					if i.master.team!=self.team:
+						i.master.gold+=100
+						if i.master.team == "1":
+							score.s1+=100
+						else:
+							score.s2+=100
+					else:
+						i.master.gold-=100
+						if i.master.team == "1":
+							score.s1-=100
+						else:
+							score.s2-=100
+					score.update = True
 			for i in bullets:
 				if i.alive:
 					if (sqrt(pow(self.x-i.x,2)+pow(self.y-i.y,2)<100*pow(1.25,self.hb)+5*pow(1.25,i.hb))):
@@ -534,7 +555,7 @@ class Player(object):
 			i.playerRender(self,screen,call,scrollx,map,exp,bmap,bullets,bombs,rockets,players,score,lighting)	
 			i.playerRun(self,call,map,exp,bmap,bullets,bombs,rockets,players,score)
 
-	def run(self,map,bmap,bullets,bombs,rockets,score,ss,players,mods):
+	def run(self,map,bmap,bullets,bombs,rockets,score,ss,players,mods,mines):
 		if self.alive:
 			if self.stealth or self.mark or self.speed>pow(1.25,self.sstat):
 				self.powdur-=1
@@ -637,7 +658,11 @@ class Player(object):
 					if i[0] == "Blink" and i[2] and self.powdur>=250:
 						self.x+=cos(self.rt*pi/180)*self.speed*400
 						self.y-=sin(self.rt*pi/180)*self.speed*400
-						self.powdur-=250			
+						self.powdur-=250
+					if i[0] == "Mine" and i[2] and self.powdur>=250 and ti.time()-self.lastshot>2.*pow(1.25,-self.rof):
+						mines.append(Mine(self.x,self.y,self))	
+						self.powdur-=250	
+						self.lastmine = ti.time()	
 				
 			if self.gun == 1 and ti.time()-self.lastshot>1/5.*pow(1.25,self.cooldown) and self.shots>0:
 				self.lastshot = ti.time()
@@ -656,6 +681,23 @@ class Player(object):
 				rockets.append(Rocket(self.x+cos(self.rt*pi/180.)*15.,self.y-sin(self.rt*pi/180.)*15,self.rt,self,self))
 			for i in bullets:
 				if (sqrt(pow(self.x-i.x,2)+pow(self.y-i.y,2)<100*pow(1.25,self.hb)+5*pow(1.25,i.hb))) and i.master!=self and i.alive:
+					self.alive = False
+					i.alive = False
+					if i.master.team!=self.team:
+						i.master.gold+=100
+						if i.master.team == "1":
+							score.s1+=100
+						else:
+							score.s2+=100
+					else:
+						i.master.gold-=100
+						if i.master.team == "1":
+							score.s1-=100
+						else:
+							score.s2-=100
+					score.update = True
+			for i in mines:
+				if (sqrt(pow(self.x-i.x,2)+pow(self.y-i.y,2)<100*pow(1.25,self.hb)+5*pow(1.25,i.hb))) and i.timer<=0 and i.alive:
 					self.alive = False
 					i.alive = False
 					if i.master.team!=self.team:
@@ -1116,5 +1158,27 @@ class Light(object):
 		self.image = pygame.transform.scale(self.master_image,(self.radius,self.radius))
 		self.image.set_alpha(255.*self.intensity)
 		screen.blit(self.image,(self.x-self.radius/2,self.y-self.radius/2))
+
+class Mine(object):
+	def __init__(self,x,y,master,id=random.randint(0,1000)):
+		self.x = x
+		self.y = y
+		self.id = id
+		self.master = master
+		self.hb = 5*pow(1.25,self.master.hb)
+		self.alive = True
+		self.timer = 100
+	def render(self,screen,scrollx,players,call):
+		if self.alive:
+			global score1,score2
+			b = pygame.image.load("Images/"+"mine.png").convert_alpha()
+			if players[call].team == self.master.team or self.timer>0:
+				screen.blit(b,(self.x+430-scrollx,self.y))
+			if self.timer>0:
+				self.timer-=1
+	def run(self,map,bmap):
+		if self.alive:
+			if self.timer>0:
+				self.timer-=1
 		
 		

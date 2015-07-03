@@ -167,6 +167,7 @@ lasttime = 0
 count = 0
 lastshot = 0
 victor = None
+mines = []
 
 te = 1
 af = 0
@@ -189,9 +190,11 @@ def update(id):
 	global count,lastshot,bmap,victor,exit
 	for i in mods:
 		i.serverUpdate(map,bmap,players,bullets,bombs,rockets,score,victor)
+	for i in mines:
+		i.run(map,bmap)
 	for i in players.keys():
 		if not players[i].ai:
-			players[i].run(map,bmap,bullets,bombs,rockets,score,ss,players,mods)
+			players[i].run(map,bmap,bullets,bombs,rockets,score,ss,players,mods,mines)
 	for i in bullets:
 		if i.alive:
 			i.run(map,bmap)
