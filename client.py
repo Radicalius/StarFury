@@ -864,7 +864,12 @@ while True:
 			except:
 				pass
 		y = 0
-		start1 = 340-inst2*50+50#-len(comps)/2*55
+		start1 = 340
+		for i in range(inst2):
+			if len(comps[i].modified)<3:
+				start1-=50
+			else:
+				start1-=(len(comps[i].modified)+1)*15
 		for i in comps:
 			try:
 				screen.blit(pygame.transform.scale(pygame.image.load("Images/"+i.img.strip()).convert_alpha(),(40,40)),(860-200,start1+y))
